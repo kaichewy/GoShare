@@ -1,0 +1,10 @@
+frontend
+
+.envrc
+.direnv
+.env
+
+.gitignore
+
+.vscode
+.DS_STORE

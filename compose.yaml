@@ -1,0 +1,32 @@
+services:
+  frontend:
+    build: ./frontend
+    ports:
+      - "${FRONTEND_PORT}:${FRONTEND_PORT}"
+    environment:
+      - PORT=${FRONTEND_PORT}
+      - VITE_API_URL=${API_URL}
+    volumes: # volumes is for hot reload
+      - ./frontend:/frontend # maps local frontend to docker container for frontend --> copies all the code from local frontend to frontend container
+      - /frontend/node_modules # this means that u are using the container's node modules instead of copying the local node modules during hot reload (since u didnt run npm install locally)
+
+  backend:
+    build: ./backend
+    ports:
+      - "${BACKEND_PORT}:${BACKEND_PORT}"
+    environment:
+      - PORT=${BACKEND_PORT}
+      - API_URL=${API_URL}
+    volumes: # volumes is for hot reload
+      - ./backend:/backend
+#   db:
+#     image: postgres:latest
+#     environment:
+#       POSTGRES_USER: user
+#       POSTGRES_PASSWORD: pass
+#       POSTGRES_DB: mydb
+#     volumes:
+#       - postgres_data:/var/lib/postrgresql/data
+
+volumes:
+  postgres_data:
