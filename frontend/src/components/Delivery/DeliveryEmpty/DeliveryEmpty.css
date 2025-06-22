@@ -1,0 +1,15 @@
+.no-delivery-action-container {
+  display: flex;
+  justify-content: space-evenly;
+  align-items: center;
+  flex-wrap: wrap;
+}
+
+.no-delivery-container{
+  min-height: 600px;
+}
+
+.login-bg {
+  background-color: #ff8b15;
+  color: #fff;
+}

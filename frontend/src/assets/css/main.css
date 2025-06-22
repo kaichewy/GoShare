@@ -1,0 +1,60 @@
+@import "./base.css";
+
+.sub-container {
+  width: min(90%, 1200px);
+  margin: 0 auto;
+}
+
+.btn-rounded {
+  border-radius: 50px;
+  background-color: #ffffff;
+  color: #fd8a15;
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: 900;
+  cursor: pointer;
+}
+
+.btn-submit {
+  background-color: #fd8a15;
+  color: #ffffff;
+  border: none;
+  padding: 1rem 2rem;
+  font-weight: 900;
+}
+
+header,
+footer {
+  background-color: #ff8b15;
+}
+
+.hero-section {
+  background-color: #ff8b15;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+.products-section {
+  background-color: #f9f9f9;
+  padding: 1rem;
+  margin-bottom: 1rem;
+}
+
+footer {
+  margin-top: 2rem;
+  padding: 2rem;
+  color: white;
+}
+
+ul {
+  list-style: none;
+}
+
+a {
+  text-decoration: none;
+  color: white;
+}
+
+html {
+  scroll-behavior: smooth;
+}

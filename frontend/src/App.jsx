@@ -1,35 +1,55 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import HomeView from "./views/HomeView";
+import { BrowserRouter, Routes, Route } from "react-router-dom";
+import NavBar from "@/components/NavBar/NavBar";
+import ShopFooter from "@/components/Footer/ShopFooter";
+import ErrorView from "./views/ErrorView";
+import CartView from "./views/CartView";
+import DeliveryView from "./views/DeliveryView";
+import "react-loading-skeleton/dist/skeleton.css";
+import { useEffect } from "react";
+import { useGlobalContext } from "@/components/GlobalContext/GlobalContext";
+import { ToastContainer, toast } from "react-toastify";
+import Modal from "./components/Modals/Modal";
+import CancelOrder from "./components/Modals/CancelOrder";
+import "react-toastify/dist/ReactToastify.css";
+import RequestCookie from "./components/CookieBanner/CookieBanner";
 
 function App() {
-  const [count, setCount] = useState(0)
-
+  let { store } = useGlobalContext();
+  let { modal } = useGlobalContext();
+  useEffect(() => {
+    if (store.state.products.length > 0) return;
+    store.getProducts();
+  }, []);
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
+    <div>
+      <BrowserRouter>
+        <header>
+          <NavBar></NavBar>
+        </header>
+        <Routes>
+          <Route path="/" element={<HomeView />} />
+          <Route path="/cart" element={<CartView />} />
+          <Route path="/delivery" element={<DeliveryView />} />
+          <Route path="*" element={<ErrorView />} />
+        </Routes>
+        <footer>
+          <ShopFooter></ShopFooter>
+        </footer>
+      </BrowserRouter>
+      {modal.opened && (
+        <Modal
+          header={modal.isRegister ? "Create Account" : "Login"}
+          submitAction="/"
+          buttonText={modal.isRegister ? "Create Account" : "Login"}
+          isRegister={modal.isRegister}
+        />
+      )}
+      {modal.isCancelModal && <CancelOrder></CancelOrder>}
+      <ToastContainer />
+      {/* <RequestCookie /> */}
+    </div>
+  );
 }
 
-export default App
+export default App;
