@@ -4,7 +4,7 @@ services:
     ports:
       - "${FRONTEND_PORT}:${FRONTEND_PORT}"
     environment:
-      - PORT=${FRONTEND_PORT}
+      - FRONTEND_PORT=${FRONTEND_PORT}
       - VITE_API_URL=${API_URL}
     volumes: # volumes is for hot reload
       - ./frontend:/frontend # maps local frontend to docker container for frontend --> copies all the code from local frontend to frontend container
@@ -15,7 +15,7 @@ services:
     ports:
       - "${BACKEND_PORT}:${BACKEND_PORT}"
     environment:
-      - PORT=${BACKEND_PORT}
+      - BACKEND_PORT=${BACKEND_PORT}
       - API_URL=${API_URL}
     volumes: # volumes is for hot reload
       - ./backend:/backend

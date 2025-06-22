@@ -5,7 +5,6 @@ import (
 	"log"
 
 	"os"
-	"github.com/joho/godotenv"
 
 	"github.com/gin-gonic/gin"
 )
@@ -72,11 +71,6 @@ func setupRouter() *gin.Engine {
 }
 
 func main() {
-	err := godotenv.Load()
-	if err != nil {
-		log.Println("No .env file found, continuing...")
-	}
-
 	port := os.Getenv("BACKEND_PORT")
 	if port == "" {
 		port = "8080"
