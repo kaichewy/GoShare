@@ -5,44 +5,37 @@ import (
     "github.com/kaichewy/GoShare/backend/controllers" // import functions to be executed for the api calls
 )
 
-// var db = make(map[string]string)
 
 func RegisterRoutes(r *gin.Engine) {
 	// Ping test (to see if backend is working)
 	r.GET("/ping", controllers.Ping)
 
-	// // Get user value
-	// r.GET("/user/:name", func(c *gin.Context) {
-	// 	user := c.Params.ByName("name")
-	// 	value, ok := db[user]
-	// 	if ok {
-	// 		c.JSON(http.StatusOK, gin.H{"user": user, "value": value})
-	// 	} else {
-	// 		c.JSON(http.StatusOK, gin.H{"user": user, "status": "no value"})
-	// 	}
-	// })
+	// Get user info (via id param in url)
+	r.GET("/user/:id", controllers.GetUserInfo)
 
-	// // Authorized group (uses gin.BasicAuth() middleware)
-	// // Same than:
-	// // authorized := r.Group("/")
-	// // authorized.Use(gin.BasicAuth(gin.Credentials{
-	// //	  "foo":  "bar",
-	// //	  "manu": "123",
-	// //}))
+	// Login
+	r.POST("/login", controllers.Login)
+
+
+	//////////////////
+	// IGNORE BELOW //
+	//////////////////
+
 	// authorized := r.Group("/", gin.BasicAuth(gin.Accounts{
 	// 	"foo":  "bar", // user:foo password:bar
 	// 	"manu": "123", // user:manu password:123
 	// }))
 
-	// /* example curl for /admin with basicauth header
-	//    Zm9vOmJhcg== is base64("foo:bar")
+	/* example curl for /admin with basicauth header
+	   Zm9vOmJhcg== is base64("foo:bar")
 
-	// 	curl -X POST \
-	//   	http://localhost:8080/admin \
-	//   	-H 'authorization: Basic Zm9vOmJhcg==' \
-	//   	-H 'content-type: application/json' \
-	//   	-d '{"value":"bar"}'
-	// */
+		curl -X POST \
+	  	http://localhost:8080/admin \
+	  	-H 'authorization: Basic Zm9vOmJhcg==' \
+	  	-H 'content-type: application/json' \
+	  	-d '{"value":"bar"}'
+	*/
+
 	// authorized.POST("admin", func(c *gin.Context) {
 	// 	user := c.MustGet(gin.AuthUserKey).(string)
 
@@ -52,7 +45,7 @@ func RegisterRoutes(r *gin.Engine) {
 	// 	}
 
 	// 	if c.Bind(&json) == nil {
-	// 		db[user] = json.Value
+	// 		db.Users[user] = json.Value
 	// 		c.JSON(http.StatusOK, gin.H{"status": "ok"})
 	// 	}
 	// })
