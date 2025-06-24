@@ -1,0 +1,44 @@
+/* Sidebar.css */
+.sidebar {
+  width: 250px;
+  height: 100vh;
+  background-color: #333;
+  padding: 20px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  color: white;
+}
+
+.sidebar-links {
+  margin-bottom: 20px;
+}
+
+.sidebar-link {
+  display: block;
+  color: white;
+  text-decoration: none;
+  margin-bottom: 10px;
+  font-size: 18px;
+}
+
+.sidebar-link:hover {
+  text-decoration: underline;
+}
+
+.cart, .login {
+  margin-top: 20px;
+}
+
+.account-user {
+  font-size: 16px;
+}
+
+.account-details {
+  display: flex;
+  align-items: center;
+}
+
+.items-in-cart {
+  margin-left: 5px;
+}

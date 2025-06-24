@@ -1,12 +1,13 @@
-import HomeView from "./views/HomeView";
+import React, { useEffect } from "react";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
-import NavBar from "@/components/NavBar/NavBar";
+import Sidebar from "@/components/Sidebar/Sidebar";  // Use Sidebar
+import HomeView from "./views/HomeView";
 import ShopFooter from "@/components/Footer/ShopFooter";
 import ErrorView from "./views/ErrorView";
 import CartView from "./views/CartView";
 import DeliveryView from "./views/DeliveryView";
+import DashboardView from "./views/DashboardView"; // Create a Dashboard view for the route
 import "react-loading-skeleton/dist/skeleton.css";
-import { useEffect } from "react";
 import { useGlobalContext } from "@/components/GlobalContext/GlobalContext";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "./components/Modals/Modal";
@@ -17,24 +18,27 @@ import RequestCookie from "./components/CookieBanner/CookieBanner";
 function App() {
   let { store } = useGlobalContext();
   let { modal } = useGlobalContext();
+
   useEffect(() => {
     if (store.state.products.length > 0) return;
     store.getProducts();
-  }, []);
+  }, [store]);
+
   return (
     <div>
       <BrowserRouter>
         <header>
-          <NavBar></NavBar>
+          <Sidebar /> {/* Sidebar instead of NavBar */}
         </header>
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />
           <Route path="/delivery" element={<DeliveryView />} />
+          <Route path="/dashboard" element={<DashboardView />} /> {/* New Dashboard route */}
           <Route path="*" element={<ErrorView />} />
         </Routes>
         <footer>
-          <ShopFooter></ShopFooter>
+          <ShopFooter />
         </footer>
       </BrowserRouter>
       {modal.opened && (
@@ -45,9 +49,8 @@ function App() {
           isRegister={modal.isRegister}
         />
       )}
-      {modal.isCancelModal && <CancelOrder></CancelOrder>}
+      {modal.isCancelModal && <CancelOrder />}
       <ToastContainer />
-      {/* <RequestCookie /> */}
     </div>
   );
 }
