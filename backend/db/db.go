@@ -3,8 +3,9 @@ package db
 import (
 	"fmt"
 	"os"
-	"gorm.io/gorm"
+	"github.com/kaichewy/GoShare/backend/models"
 	"gorm.io/driver/postgres"
+	"gorm.io/gorm"
 )
 
 var DB *gorm.DB
@@ -26,7 +27,7 @@ func Connect() {
 		panic("Failed to connect to DB: " + err.Error())
 	}
 
-	err = DB.AutoMigrate()
+	err = DB.AutoMigrate(&models.User{})
 
 	if err != nil {
 		panic("Failed to migrate models: " + err.Error())
