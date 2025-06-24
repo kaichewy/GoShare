@@ -3,8 +3,15 @@ import Products from "@/components/Home/Products/Products";
 import Deals from "@/components/Home/Products/Deals/Deals";
 import TopProducts from "@/components/Home/Products/TopProducts/TopProducts";
 import Benefits from "@/components/Home/Benefits/Benefits";
+import { useGlobalContext } from "@/components/GlobalContext/GlobalContext"; 
 
-function HomeView() {
+const HomeView = ({ searchTerm }) => { 
+  const { store } = useGlobalContext();
+  const allProducts = store.state.products;
+  const filteredProducts = allProducts.filter((product) =>
+    product.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
+
   return (
     <div>
       <main>
@@ -12,14 +19,11 @@ function HomeView() {
           <Banner></Banner>
         </section>
         <section className="benefits-section"></section>
-        {/* <section className="filters-section">
-          <Filters></Filters>
-        </section> */}
         <section>
           <Benefits></Benefits>
         </section>
         <section className="products-section">
-          <Products></Products>
+          <Products products={filteredProducts} />
         </section>
         <section className="deals">
           <Deals></Deals>
@@ -30,6 +34,6 @@ function HomeView() {
       </main>
     </div>
   );
-}
+};
 
 export default HomeView;

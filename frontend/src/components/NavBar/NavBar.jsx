@@ -5,7 +5,7 @@ import Search from "./Search/Search";
 import Hamburger from "hamburger-react";
 import "./NavBar.css";
 
-const NavBar = () => {
+const NavBar = ({ onSearch }) => {
   const handleHamClick = () => {
     let mobileExpandedMenu = document.querySelector(".mobile-expanded-menu");
     mobileExpandedMenu.classList.toggle("mobile-expanded");
@@ -34,7 +34,7 @@ const NavBar = () => {
         <span className="desktop-links">
           <Links></Links>
         </span>
-        {/* <Search></Search> */}
+        <Search onSearch={onSearch} />
         <Account></Account>
       </div>
       <div className="nav-mobile">

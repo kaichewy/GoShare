@@ -6,7 +6,7 @@ import ErrorView from "./views/ErrorView";
 import CartView from "./views/CartView";
 import DeliveryView from "./views/DeliveryView";
 import "react-loading-skeleton/dist/skeleton.css";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { useGlobalContext } from "@/components/GlobalContext/GlobalContext";
 import { ToastContainer, toast } from "react-toastify";
 import Modal from "./components/Modals/Modal";
@@ -17,6 +17,13 @@ import RequestCookie from "./components/CookieBanner/CookieBanner";
 function App() {
   let { store } = useGlobalContext();
   let { modal } = useGlobalContext();
+
+  const [searchTerm, setSearchTerm] = useState('');
+
+  const handleSearch = (query) => {
+    setSearchTerm(query);
+  };
+
   useEffect(() => {
     if (store.state.products.length > 0) return;
     store.getProducts();
@@ -25,10 +32,10 @@ function App() {
     <div>
       <BrowserRouter>
         <header>
-          <NavBar></NavBar>
+           <NavBar onSearch={handleSearch} />
         </header>
         <Routes>
-          <Route path="/" element={<HomeView />} />
+          <Route path="/" element={<HomeView searchTerm={searchTerm} />} />
           <Route path="/cart" element={<CartView />} />
           <Route path="/delivery" element={<DeliveryView />} />
           <Route path="*" element={<ErrorView />} />
