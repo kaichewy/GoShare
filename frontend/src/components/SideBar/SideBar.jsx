@@ -1,78 +1,69 @@
-import React from "react";
+// Sidebar.jsx
+import React, { useState } from "react";
 import { Link } from "react-router-dom";
-import { FaShoppingCart } from "react-icons/fa";
+import { FaShoppingCart, FaBars } from "react-icons/fa";
 import { useGlobalContext } from "@/components/GlobalContext/GlobalContext";
-import { useState } from "react";
 import Modal from "@/components/Modals/Modal";
 import "./Sidebar.css";
 
-const Sidebar = () => {
-  let { auth, store, modal } = useGlobalContext();
-  const cartTotal = store.state.cartQuantity;
-  const [isRegister, setIsRegister] = useState(false); // Track if it's register or login mode
-  const [loading, setLoading] = useState(false);
 
+const Sidebar = () => {
+  const { auth, store, modal } = useGlobalContext();
+  const cartTotal = store.state.cartQuantity;
+  const [isOpen, setIsOpen] = useState(false);
+
+  const handleToggle = () => setIsOpen(!isOpen);
+  const handleClose = () => setIsOpen(false);
   const handleShowModal = () => {
     modal.openModal(false);
+    handleClose();
   };
-
   const handleLogout = () => {
     auth.logout();
-  };
-
-  const handleModalSwitch = () => {
-    setIsRegister(!isRegister); // Toggle between login and register
+    handleClose();
   };
 
   return (
-    <div className="sidebar">
-      <div className="sidebar-links">
-        <Link to="/login" className="sidebar-link" onClick={handleShowModal}>
-          Login
-        </Link>
-        <Link to="/dashboard" className="sidebar-link">
-          Dashboard
-        </Link>
-      </div>
+    <>
+      <button className="sidebar-toggle" onClick={handleToggle}>
+        <FaBars size={24} />
+      </button>
 
-      <div className="cart">
-        <Link to="/cart" className="contains-link-to-accounts">
+      {isOpen && <div className="sidebar-overlay" onClick={handleClose} />}
+
+      <div className={`sidebar ${isOpen ? "open" : ""}`}>
+        <div className="sidebar-links">
+          <button className="sidebar-close" onClick={handleClose}>×</button>
+          <Link to="/" className="sidebar-link" onClick={handleClose}>
+            Home
+          </Link>
+          <Link to="/dashboard" className="sidebar-link" onClick={handleClose}>
+            Dashboard
+          </Link>
+        </div>
+
+        <div className="login">
           {auth.state.user == null ? (
-            <span className="account-user">Guest</span>
+            <button className="btn-rounded small-rounded" onClick={handleShowModal}>
+              Login
+            </button>
           ) : (
-            <span className="account-user">
-              {auth.state.user.username}
-            </span>
+            <button className="btn-rounded small-rounded" onClick={handleLogout}>
+              Logout
+            </button>
           )}
-          <span className="account-details">
-            <FaShoppingCart />
-            <span className="items-in-cart">{cartTotal}</span>
-          </span>
-        </Link>
-      </div>
+        </div>
 
-      <div className="login">
-        {auth.state.user == null ? (
-          <button className="btn-rounded small-rounded" onClick={handleShowModal}>
-            Login
-          </button>
-        ) : (
-          <button className="btn-rounded small-rounded" onClick={handleLogout}>
-            Logout
-          </button>
+        {modal.opened && (
+          <Modal
+            header={modal.isRegister ? "Create Account" : "Login"}
+            submitAction="/"
+            buttonText={modal.isRegister ? "Create Account" : "Login"}
+            isRegister={modal.isRegister}
+          />
         )}
       </div>
-
-      {/* Modal for Login/Registration */}
-      {modal.opened && (
-        <Modal
-          header={isRegister ? "Create Account" : "Login"}
-          submitAction="/"
-          buttonText={isRegister ? "Create Account" : "Login"}
-          isRegister={isRegister}
-        />
-      )}
-    </div>
+    </>
   );
 };
 
