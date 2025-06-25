@@ -24,9 +24,6 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <header>
-          <NavBar></NavBar>
-        </header>
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />

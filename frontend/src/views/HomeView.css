@@ -1,0 +1,10 @@
+/* .products-section {
+  padding: 20px;
+} */
+
+.products-container {
+  display: flex;
+  gap: 20px; /* Space between sidebar and grid */
+  align-items: flex-start;
+  width: 100%;
+}
