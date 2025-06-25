@@ -17,8 +17,8 @@ services:
     environment:
       - BACKEND_PORT=${BACKEND_PORT}
       - API_URL=${API_URL}
-      - DB_HOST=${DB_HOST}
-      - DB_PORT=${DB_PORT}
+      - DB_HOST=${POSTGRES_HOST}
+      - DB_PORT=${POSTGRES_PORT}
       - DB_USER=${POSTGRES_USER}
       - DB_PASSWORD=${POSTGRES_PASSWORD}
       - DB_NAME=${POSTGRES_DB}
@@ -37,7 +37,7 @@ services:
     volumes:
       - postgres_data:/var/lib/postgresql/data
     ports:
-      - "${DB_PORT}:${DB_PORT}"  # Optional: exposes DB for tools like pgAdmin or DBeaver
+      - "${POSTGRES_PORT}:${POSTGRES_PORT}"  # Optional: exposes DB for tools like pgAdmin or DBeaver
 
 volumes:
   postgres_data:

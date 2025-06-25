@@ -32,4 +32,6 @@ func Connect() {
 	if err != nil {
 		panic("Failed to migrate models: " + err.Error())
 	}
+
+	fmt.Print("Database connected! :)")
 }
