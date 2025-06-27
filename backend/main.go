@@ -6,6 +6,7 @@ import (
 	"github.com/gin-gonic/gin"                // import gin framework
 	"github.com/kaichewy/GoShare/backend/api" // import api route definitions to register all endpoints
 	"github.com/kaichewy/GoShare/backend/db"
+	_ "github.com/kaichewy/GoShare/backend/docs"
 )
 
 func setupRouter() *gin.Engine {

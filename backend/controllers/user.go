@@ -10,6 +10,15 @@ import (
 	"gorm.io/gorm"
 )
 
+// GetUserInfo godoc
+// @Summary      Get user information
+// @Description  Retrieve user details by their ID
+// @Tags         users
+// @Produce      json
+// @Param        id   path      int  true  "User ID"
+// @Success      200  {object}  gin.H
+// @Security     ApiKeyAuth
+// @Router       /user/{id} [get]
 func GetUserInfo(c *gin.Context) {
 	idStr := c.Params.ByName("id") // assign user id to idStr
 	id, _ := strconv.Atoi(idStr) // convert id param to int

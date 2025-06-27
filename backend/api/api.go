@@ -1,22 +1,30 @@
+// @title GoShare API
+// @version 1.0
+// @description API documentation
+// @host localhost:8080
+// @BasePath /
 package api
 
 import (
     "github.com/gin-gonic/gin"
     "github.com/kaichewy/GoShare/backend/controllers" // import functions to be executed for the api calls
+	"github.com/swaggo/gin-swagger" // gin-swagger middleware
+	"github.com/swaggo/files" // swagger embed files
 )
 
 
 func RegisterRoutes(r *gin.Engine) {
-	// Ping test (to see if backend is working)
+	// Swagger
+	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
+
+	// Ping
 	r.GET("/ping", controllers.Ping)
 
-	// Get user info (via id param in url)
+	// User Info
 	r.GET("/user/:id", controllers.GetUserInfo)
 
-	// Register
+	// Auth
 	r.POST("/register", controllers.Register)
-
-	// Login
 	r.POST("/login", controllers.Login)
 
 
