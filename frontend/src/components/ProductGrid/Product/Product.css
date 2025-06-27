@@ -58,7 +58,7 @@
 
 .progress-fill {
   height: 16px;
-  background-color: #5dff4e; /* blue color */
+  background-color: #84e57b; /* blue color */
   width: 0%;
   transition: width 0.3s ease;
   border-radius: 6px;
@@ -74,10 +74,11 @@
 .product-price {
   font-weight: bold;
   color: #333;
+  padding-left: 5px;
 }
 
 .add-button {
-  background-color: #155606;
+  background-color: #319545;
   color: white;
   border: none;
   padding: 6px 12px;
@@ -87,5 +88,5 @@
 }
 
 .add-button:hover {
-  background-color: #dc2626;
+  background-color: #226730;
 }

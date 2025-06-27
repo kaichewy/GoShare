@@ -16,7 +16,7 @@ function HomeView() {
     total: 100     // Total available
   };
 
-  const [ productList, setProductList ] = useState([product, product, product, product, product, product])
+  const [ productList, setProductList ] = useState(Array(50).fill(product))
 
   const productsPerBatch = 20;
 
@@ -45,15 +45,17 @@ function HomeView() {
   return (
     <div>
       <main>
-        <section className="hero-section">
-          <h1>GoShare</h1>
+        <section className="search-section">
+          <h1 className="logo-text">
+            <span className="primary">go</span><span className="highlight">share</span>
+          </h1>
           <SearchBar onSearch={onSearch}></SearchBar>
         </section>
         <section className="products-section">
           <div className="products-container">
               <FilterSidebar></FilterSidebar>
               <ProductGrid 
-              products={productList}
+              products={visibleProducts}
               fetchMore={fetchMoreProducts}
               hasMore={hasMore}></ProductGrid>
           </div>

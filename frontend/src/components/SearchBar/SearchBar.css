@@ -6,20 +6,21 @@
   max-width: 600px;
   margin: 40px auto 20px;
   gap: 10px;
+  border-color: #319545;
 }
 
 .search-bar input {
   flex: 1;
   padding: 16px 20px;
   font-size: 18px;
-  border: 2px solid #ccc;
+  border: 2px solid #319545;
   border-radius: 24px;
   outline: none;
 }
 
 .search-bar button {
   padding: 16px 18px;
-  background-color: #ff4d4f;
+  background-color: #319545;
   color: white;
   font-size: 18px;
   border: none;
@@ -29,5 +30,5 @@
 }
 
 .search-bar button:hover {
-  background-color: #e04344;
+  background-color: #226730;
 }
