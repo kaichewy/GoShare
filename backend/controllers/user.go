@@ -1,19 +1,31 @@
 package controllers
 
 import (
-	"github.com/gin-gonic/gin"
+	"errors"
 	"net/http"
-	"github.com/kaichewy/GoShare/backend/db" // import database
 	"strconv" // package that converts string to int
+	"github.com/gin-gonic/gin"
+	"github.com/kaichewy/GoShare/backend/db"     // import database
+	"github.com/kaichewy/GoShare/backend/models" // import User model
+	"gorm.io/gorm"
 )
 
 func GetUserInfo(c *gin.Context) {
 	idStr := c.Params.ByName("id") // assign user id to idStr
 	id, _ := strconv.Atoi(idStr) // convert id param to int
-	value, ok := db.Users[id]
-	if ok {
-		c.JSON(http.StatusOK, gin.H{"id": id, "value": value})
-	} else {
-		c.JSON(http.StatusOK, gin.H{"id": id, "status": "no value"})
-	}
+	
+	var user models.User
+
+	result := db.DB.First(&user, id)
+
+	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
+        c.JSON(http.StatusNotFound, gin.H{"error": "User not found"})
+        return
+    } else if result.Error != nil {
+        c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+        return
+    }
+
+    // You can send the entire user struct if it’s safe
+    c.JSON(http.StatusOK, user)
 }

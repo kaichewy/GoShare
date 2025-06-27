@@ -13,6 +13,9 @@ func RegisterRoutes(r *gin.Engine) {
 	// Get user info (via id param in url)
 	r.GET("/user/:id", controllers.GetUserInfo)
 
+	// Register
+	r.POST("/register", controllers.Register)
+
 	// Login
 	r.POST("/login", controllers.Login)
 
