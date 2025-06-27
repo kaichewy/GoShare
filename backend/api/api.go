@@ -16,6 +16,7 @@ func RegisterRoutes(r *gin.Engine) {
 	// Login
 	r.POST("/login", controllers.Login)
 
+	//r.GET("/product/:id", controllers.GetProduct)
 
 	//////////////////
 	// IGNORE BELOW //

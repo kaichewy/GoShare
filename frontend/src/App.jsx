@@ -1,4 +1,5 @@
 import HomeView from "./views/HomeView";
+import ProductView from "./views/ProductView";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import NavBar from "@/components/NavBar/NavBar";
 import ShopFooter from "@/components/Footer/ShopFooter";
@@ -17,10 +18,12 @@ import RequestCookie from "./components/CookieBanner/CookieBanner";
 function App() {
   let { store } = useGlobalContext();
   let { modal } = useGlobalContext();
+  
   useEffect(() => {
     if (store.state.products.length > 0) return;
     store.getProducts();
   }, []);
+  
   return (
     <div>
       <BrowserRouter>
@@ -31,6 +34,7 @@ function App() {
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />
           <Route path="/delivery" element={<DeliveryView />} />
+          <Route path="/product" element={<ProductView />} />
           <Route path="*" element={<ErrorView />} />
         </Routes>
         <footer>
