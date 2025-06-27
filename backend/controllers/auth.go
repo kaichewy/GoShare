@@ -14,6 +14,11 @@ import (
 	"gorm.io/gorm"
 )
 
+
+// Login godoc
+// @Summary      Login user
+// @Description  Log in a registered user
+// @Router       /login [post]
 func Login(c *gin.Context) {
 	var input struct {
 		Email    string `json:"email" binding:"required,email"`
@@ -81,6 +86,11 @@ func Login(c *gin.Context) {
 	c.JSON(http.StatusOK, gin.H{"message": "Logged in successfully"})
 }
 
+
+// Register godoc
+// @Summary      Register user
+// @Description  Register a new user
+// @Router       /register [post]
 func Register(c * gin.Context) {
 	var input struct {
 		Name     string `json:"name" binding:"required"`
