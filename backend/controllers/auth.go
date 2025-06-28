@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -13,7 +14,6 @@ import (
 	"github.com/kaichewy/GoShare/backend/utils"
 	"gorm.io/gorm"
 )
-
 
 // Login godoc
 // @Summary      Login user
@@ -71,6 +71,8 @@ func Login(c *gin.Context) {
 	// 	Token string `json:"token"`
 	// }
 	// c.JSON(http.StatusOK, loginResponse{Token: tokenString})
+
+	log.Println(tokenString)
 
 	// use cookie
 	c.SetCookie(
