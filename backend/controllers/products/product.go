@@ -26,33 +26,33 @@ import (
 // @Router       /product/{id} [get]
 func GetProduct(c *gin.Context) {
 	idStr := c.Params.ByName("id") // assign product id to idStr
-	id, _ := strconv.Atoi(idStr) // convert id param to int
-	
+	id, _ := strconv.Atoi(idStr)   // convert id param to int
+
 	var product models.Product
 
 	result := db.DB.First(&product, id)
 
 	if errors.Is(result.Error, gorm.ErrRecordNotFound) {
 		errResp := utils.New(errors.New("product not found"), http.StatusNotFound)
-        c.JSON(http.StatusNotFound, errResp)
-        return
-    } else if result.Error != nil {
-        errResp := utils.New(errors.New("database error"), http.StatusInternalServerError).WithDetails(result.Error.Error())
+		c.JSON(http.StatusNotFound, errResp)
+		return
+	} else if result.Error != nil {
+		errResp := utils.New(errors.New("database error"), http.StatusInternalServerError).WithDetails(result.Error.Error())
 		c.JSON(http.StatusInternalServerError, errResp)
-        return
-    }
-
-	response := responses.ProductResponse{
-		ID: product.ID,
-		Name: product.Name,
-		Description: product.Description,
-		Price: product.Price,
-		Quantity: product.Quantity,
-		Category: product.Category,
-		ImageURL: product.ImageURL,
+		return
 	}
 
-    c.JSON(http.StatusOK, response)
+	response := responses.ProductResponse{
+		ID:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		Price:       product.Price,
+		Quantity:    product.Quantity,
+		Category:    product.Category,
+		ImageURL:    product.ImageURL,
+	}
+
+	c.JSON(http.StatusOK, response)
 }
 
 // GetAllProducts godoc
@@ -64,30 +64,63 @@ func GetProduct(c *gin.Context) {
 // @Failure      500  {object}  map[string]string
 // @Router       /products [get]
 func GetAllProducts(c *gin.Context) {
-    var products []models.Product
+	var products []models.Product
 
-    result := db.DB.Find(&products)
-    if result.Error != nil {
-        c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
-        return
-    }
+	result := db.DB.Find(&products)
+	if result.Error != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": result.Error.Error()})
+		return
+	}
 
-    // Map DB models to response DTOs
-    var productResponses []responses.ProductResponse
-    for _, p := range products {
-        productResponse := responses.ProductResponse{
-            ID: p.ID,
-			Name: p.Name,
+	// Map DB models to response DTOs
+	var productResponses []responses.ProductResponse
+	for _, p := range products {
+		productResponse := responses.ProductResponse{
+			ID:          p.ID,
+			Name:        p.Name,
 			Description: p.Description,
-			Price: p.Price,
-			Quantity: p.Quantity,
-			Category: p.Category,
-			ImageURL: p.ImageURL,
-        }
-        productResponses = append(productResponses, productResponse)
-    }
+			Price:       p.Price,
+			Quantity:    p.Quantity,
+			Category:    p.Category,
+			ImageURL:    p.ImageURL,
+		}
+		productResponses = append(productResponses, productResponse)
+	}
 
-    c.JSON(http.StatusOK, productResponses)
+	c.JSON(http.StatusOK, productResponses)
+}
+
+// GetProductsLimited godoc
+// @Summary     Get paginated products
+// @Description Retrieves a batch of products using limit and offset for pagination
+// @Tags        products
+// @Accept      json
+// @Produce     json
+// @Param       limit   query     int  false  "Maximum number of products to return"  default(20)
+// @Param       offset  query     int  false  "Number of products to skip"           default(0)
+// @Success     200     {array}   responses.ProductResponse
+// @Failure     400     {object}  map[string]string "Invalid limit or offset"
+// @Failure     500     {object}  map[string]string "Failed to fetch products"
+// @Router      /products [get]
+func GetProductsLimited(c *gin.Context) {
+	limitStr := c.DefaultQuery("limit", "20")
+	offsetStr := c.DefaultQuery("offset", "0")
+
+	limit, err1 := strconv.Atoi(limitStr)
+	offset, err2 := strconv.Atoi(offsetStr)
+
+	if err1 != nil || err2 != nil {
+		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid limit or offset"})
+		return
+	}
+
+	var products []models.Product
+	if err := db.DB.Limit(limit).Offset(offset).Find(&products).Error; err != nil {
+		c.JSON(http.StatusInternalServerError, gin.H{"error": "Failed to fetch products"})
+		return
+	}
+
+	c.JSON(http.StatusOK, products)
 }
 
 // AddProduct godoc
@@ -102,40 +135,39 @@ func GetAllProducts(c *gin.Context) {
 // @Failure      500      {object}  utils.CustomError   "Database error"
 // @Router       /addProduct [post]
 func AddProduct(c *gin.Context) {
-    var req models.Product
+	var req models.Product
 
-    if err := c.ShouldBindJSON(&req); err != nil {
-        errResp := utils.New(err, http.StatusBadRequest).WithDetails("Invalid JSON body")
-        c.JSON(http.StatusBadRequest, errResp)
-        return
-    }
+	if err := c.ShouldBindJSON(&req); err != nil {
+		errResp := utils.New(err, http.StatusBadRequest).WithDetails("Invalid JSON body")
+		c.JSON(http.StatusBadRequest, errResp)
+		return
+	}
 
-    product := models.Product{
-        Name: req.Name,
-        Description: req.Description,
-        Price: req.Price,
-		Quantity: req.Quantity,
-		Category: req.Category,
-		ImageURL: req.ImageURL,
-    }
+	product := models.Product{
+		Name:        req.Name,
+		Description: req.Description,
+		Price:       req.Price,
+		Quantity:    req.Quantity,
+		Category:    req.Category,
+		ImageURL:    req.ImageURL,
+	}
 
-    result := db.DB.Create(&product)
-    if result.Error != nil {
-        errResp := utils.New(result.Error, http.StatusInternalServerError)
-        c.JSON(http.StatusInternalServerError, errResp)
-        return
-    }
+	result := db.DB.Create(&product)
+	if result.Error != nil {
+		errResp := utils.New(result.Error, http.StatusInternalServerError)
+		c.JSON(http.StatusInternalServerError, errResp)
+		return
+	}
 
-    response := responses.ProductResponse{
-        ID:          product.ID,
-        Name:        product.Name,
-        Description: product.Description,
-        ImageURL:    product.ImageURL,
-        Quantity:    product.Quantity,
-        Price:       product.Price,
-        Category:    product.Category,
-    }
+	response := responses.ProductResponse{
+		ID:          product.ID,
+		Name:        product.Name,
+		Description: product.Description,
+		ImageURL:    product.ImageURL,
+		Quantity:    product.Quantity,
+		Price:       product.Price,
+		Category:    product.Category,
+	}
 
-    c.JSON(http.StatusCreated, response)
+	c.JSON(http.StatusCreated, response)
 }
-

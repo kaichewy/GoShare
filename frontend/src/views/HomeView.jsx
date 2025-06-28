@@ -3,40 +3,30 @@ import airpodsImg from '@/assets/images/airpods_max_pink.jpg';
 import FilterSidebar from '@/components/ProductGrid/Filter/FilterSidebar'
 import SearchBar from "@/components/SearchBar/SearchBar";
 import { useState, useEffect } from 'react';
+import axios from 'axios'
 import "./HomeView.css"
 
 function HomeView() {
   //Product assumed to have fields : image(url), name, reviews, bought, total
-
-  const product = {
-    name: 'Air Pod Max Bulk Order',
-    image: airpodsImg,
-    price: 4.99,
-    bought: 35,    // Number bought
-    total: 100     // Total available
-  };
-
-  const [ productList, setProductList ] = useState(Array(50).fill(product))
-
   const productsPerBatch = 20;
 
   const [visibleProducts, setVisibleProducts] = useState([]);
   const [hasMore, setHasMore] = useState(true);
 
-  useEffect(() => {
-    setVisibleProducts(productList.slice(0, productsPerBatch));
-  }, [productList]);
-
   const fetchMoreProducts = () => {
-    const nextBatch = visibleProducts.length + productsPerBatch;
-    const nextProducts = productList.slice(visibleProducts.length, nextBatch);
-
-    setVisibleProducts(prev => [...prev, ...nextProducts]);
-
-    if (nextBatch >= productList.length) {
-      setHasMore(false); // no more products to load
-    }
+    axios.get(`http://localhost:8080/productsLimited?limit=${productsPerBatch}&offset=${visibleProducts.length}`).then(response => {
+      const newProducts = response.data
+      console.log(newProducts)
+      setVisibleProducts([...visibleProducts, ...newProducts])
+      if (newProducts.length < productsPerBatch) {
+        setHasMore(false)
+      }
+    })
   };
+
+  useEffect(() => {
+    fetchMoreProducts()
+  }, []);
 
   const onSearch = (query) => {
     console.log(query)
