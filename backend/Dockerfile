@@ -23,7 +23,7 @@ ENV PORT=8080
 EXPOSE ${PORT}
 
 # Generate Swagger documentation
-RUN swag init -g api/api.go
+RUN swag init -g api/api.go --output ./docs --parseDependency --parseInternal --parseDepth 2
 
 CMD ["air"]
 
