@@ -17,6 +17,7 @@ import (
 
 // Login godoc
 // @Summary      Login user
+// @Tags         auth
 // @Description  Log in a registered user
 // @Router       /login [post]
 func Login(c *gin.Context) {
@@ -89,6 +90,7 @@ func Login(c *gin.Context) {
 
 // Register godoc
 // @Summary      Register user
+// @Tags         auth
 // @Description  Register a new user
 // @Router       /register [post]
 func Register(c * gin.Context) {

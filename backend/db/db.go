@@ -29,7 +29,7 @@ func Connect() {
 		panic("Failed to connect to DB: " + err.Error())
 	}
 
-	err = DB.AutoMigrate(&models.User{})
+	err = DB.AutoMigrate(&models.User{}, &models.Product{})
 
 	if err != nil {
 		panic("Failed to migrate models: " + err.Error())
