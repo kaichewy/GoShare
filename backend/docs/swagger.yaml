@@ -1,0 +1,81 @@
+basePath: /
+definitions:
+  gorm.DeletedAt:
+    properties:
+      time:
+        type: string
+      valid:
+        description: Valid is true if Time is not NULL
+        type: boolean
+    type: object
+  models.User:
+    properties:
+      createdAt:
+        type: string
+      deletedAt:
+        $ref: '#/definitions/gorm.DeletedAt'
+      email:
+        type: string
+      id:
+        type: integer
+      name:
+        type: string
+      password:
+        type: string
+      updatedAt:
+        type: string
+    type: object
+host: localhost:8080
+info:
+  contact: {}
+  description: API documentation
+  title: GoShare API
+  version: "1.0"
+paths:
+  /login:
+    post:
+      description: Log in a registered user
+      responses: {}
+      summary: Login user
+  /ping:
+    get:
+      description: Check if the server is running
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Health check
+      tags:
+      - health
+  /register:
+    post:
+      description: Register a new user
+      responses: {}
+      summary: Register user
+  /user/{id}:
+    get:
+      description: Retrieve user details by their ID
+      parameters:
+      - description: User ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            $ref: '#/definitions/models.User'
+      security:
+      - ApiKeyAuth: []
+      summary: Get user information
+      tags:
+      - users
+swagger: "2.0"
