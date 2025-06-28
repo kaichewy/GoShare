@@ -13,15 +13,22 @@ A B2B Collaboration Platform that helps small businesses collaborate on bulk ord
 - A `.env` file in the **root directory** with the following variables:
 
 ```env
+# .env
 BACKEND_PORT=8080
 FRONTEND_PORT=5173
 API_URL=http://localhost:8080
+API_DOMAIN=localhost
 
+# postgres database
 POSTGRES_USER=kai
 POSTGRES_PASSWORD=password
 POSTGRES_DB=gosharedb
 POSTGRES_PORT=5432
 POSTGRES_HOST=db
+
+# JWT
+JWT_SECRET=supersecret123
+
 ```
 
 ### 2. ▶️ Start the App

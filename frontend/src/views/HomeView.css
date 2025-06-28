@@ -1,0 +1,35 @@
+@font-face {
+  font-family: 'Mirava';
+  src: url('../assets/fonts/Mirava.ttf') format('truetype'); /* Adjust path/format if needed */
+  font-weight: normal;
+  font-style: normal;
+}
+
+.logo-text {
+  font-family: 'Mirava', sans-serif;
+  font-size: 36px;
+  text-align: center;
+}
+
+.primary {
+  color: #333;
+}
+
+.highlight {
+  color: #319545; /* red or accent color */
+}
+
+.search-section {
+  background-color: #fafffc;
+  display: flex;
+  flex-direction: column;
+  align-items: center; /* centers content horizontally */
+  padding: 10px 0;
+}
+
+.products-container {
+  display: flex;
+  gap: 20px; /* Space between sidebar and grid */
+  align-items: flex-start;
+  width: 100%;
+}
