@@ -9,19 +9,34 @@ import (
 	"github.com/gin-contrib/cors"
 	"github.com/gin-gonic/gin"
 	"github.com/kaichewy/GoShare/backend/controllers" // import functions to be executed for the api calls
+	group "github.com/kaichewy/GoShare/backend/controllers/groups"
 	product "github.com/kaichewy/GoShare/backend/controllers/products"
+<<<<<<< HEAD
 	swaggerFiles "github.com/swaggo/files"     // swagger embed files
 	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+=======
+	"github.com/swaggo/files"       // swagger embed files
+	"github.com/swaggo/gin-swagger" // gin-swagger middleware
+	"github.com/gin-contrib/cors"
+>>>>>>> cb6bdc6587c6fc1a2790e1628991ac375164a869
 )
 
 func RegisterRoutes(r *gin.Engine) {
 	r.Use(cors.New(cors.Config{
+<<<<<<< HEAD
 		AllowOrigins:     []string{"http://localhost:5173"}, // Change to your frontend's origin
+=======
+		AllowOrigins:     []string{"http://localhost:5173"},
+>>>>>>> cb6bdc6587c6fc1a2790e1628991ac375164a869
 		AllowMethods:     []string{"GET", "POST", "PUT", "DELETE", "OPTIONS"},
 		AllowHeaders:     []string{"Origin", "Content-Type", "Authorization"},
 		ExposeHeaders:    []string{"Content-Length"},
 		AllowCredentials: true, // Only true if you use cookies/session
 	}))
+<<<<<<< HEAD
+=======
+
+>>>>>>> cb6bdc6587c6fc1a2790e1628991ac375164a869
 	// Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
 
@@ -46,6 +61,7 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/productsLimited", product.GetProductsLimited)
 	r.POST("/addProduct", product.AddProduct)
 
+<<<<<<< HEAD
 	// Groups
 
 	/* example curl for /admin with basicauth header
@@ -72,3 +88,10 @@ func RegisterRoutes(r *gin.Engine) {
 	// 	}
 	// })
 }
+=======
+	// Group
+	authorized.POST("/addGroup", group.AddGroup)
+	authorized.GET("/group/:id", group.GetGroup)
+
+}
+>>>>>>> cb6bdc6587c6fc1a2790e1628991ac375164a869
