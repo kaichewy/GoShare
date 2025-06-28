@@ -8,21 +8,62 @@ definitions:
         description: Valid is true if Time is not NULL
         type: boolean
     type: object
-  models.User:
+  models.Product:
     properties:
+      category:
+        type: string
       createdAt:
         type: string
       deletedAt:
         $ref: '#/definitions/gorm.DeletedAt'
+      description:
+        type: string
+      id:
+        type: integer
+      imageURL:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+      updatedAt:
+        type: string
+    type: object
+  responses.ProductResponse:
+    properties:
+      category:
+        type: string
+      description:
+        type: string
+      id:
+        type: integer
+      image:
+        type: string
+      name:
+        type: string
+      price:
+        type: number
+      quantity:
+        type: integer
+    type: object
+  responses.UserResponse:
+    properties:
       email:
         type: string
       id:
         type: integer
       name:
         type: string
-      password:
+    type: object
+  utils.CustomError:
+    properties:
+      code:
+        type: integer
+      details:
         type: string
-      updatedAt:
+      message:
         type: string
     type: object
 host: localhost:8080
@@ -32,11 +73,71 @@ info:
   title: GoShare API
   version: "1.0"
 paths:
+  /addProduct:
+    post:
+      consumes:
+      - application/json
+      description: Create a new product and store it in the database.
+      parameters:
+      - description: Product JSON
+        in: body
+        name: product
+        required: true
+        schema:
+          $ref: '#/definitions/models.Product'
+      produces:
+      - application/json
+      responses:
+        "201":
+          description: Created product
+          schema:
+            $ref: '#/definitions/responses.ProductResponse'
+        "400":
+          description: Invalid request body
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+      summary: Add a new product
+      tags:
+      - products
   /login:
     post:
       description: Log in a registered user
       responses: {}
       summary: Login user
+      tags:
+      - auth
+  /me:
+    get:
+      description: Retrieve the profile information of the currently authenticated
+        user.
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: User profile data
+          schema:
+            $ref: '#/definitions/responses.UserResponse'
+        "401":
+          description: Unauthorized, invalid or missing token
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+        "404":
+          description: User not found
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+        "500":
+          description: Database error
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get current authenticated user profile
+      tags:
+      - users
   /ping:
     get:
       description: Check if the server is running
@@ -52,11 +153,63 @@ paths:
       summary: Health check
       tags:
       - health
+  /product/{id}:
+    get:
+      description: Retrieve product info by id
+      parameters:
+      - description: Product ID
+        in: path
+        name: id
+        required: true
+        type: integer
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: Product data
+          schema:
+            $ref: '#/definitions/responses.ProductResponse'
+        "404":
+          description: product not found
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+      security:
+      - ApiKeyAuth: []
+      summary: Get product information
+      tags:
+      - products
+  /products:
+    get:
+      description: Retrieve all products from the database
+      produces:
+      - application/json
+      responses:
+        "200":
+          description: OK
+          schema:
+            items:
+              $ref: '#/definitions/responses.ProductResponse'
+            type: array
+        "500":
+          description: Internal Server Error
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get all products
+      tags:
+      - products
   /register:
     post:
       description: Register a new user
       responses: {}
       summary: Register user
+      tags:
+      - auth
   /user/{id}:
     get:
       description: Retrieve user details by their ID
@@ -70,9 +223,17 @@ paths:
       - application/json
       responses:
         "200":
-          description: OK
+          description: User data
           schema:
-            $ref: '#/definitions/models.User'
+            $ref: '#/definitions/responses.UserResponse'
+        "404":
+          description: user not found
+          schema:
+            $ref: '#/definitions/utils.CustomError'
+        "500":
+          description: database error
+          schema:
+            $ref: '#/definitions/utils.CustomError'
       security:
       - ApiKeyAuth: []
       summary: Get user information
