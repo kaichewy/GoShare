@@ -1,7 +1,7 @@
 package controllers
 
 import (
-	"log"
+	"errors"
 	"net/http"
 	"os"
 	"strings"
@@ -15,19 +15,29 @@ import (
 	"gorm.io/gorm"
 )
 
+// LoginRequest defines the request body for user login
+type LoginRequest struct {
+	Email    string `json:"email" example:"user@example.com" binding:"required,email"`
+	Password string `json:"password" example:"password123" binding:"required,min=6"`
+}
+
 // Login godoc
-// @Summary      Login user
-// @Tags         auth
-// @Description  Log in a registered user
-// @Router       /login [post]
+// @Summary Log in a user
+// @Description Authenticates a user with email and password, generates a JWT, sets it as an HTTP-only cookie, and returns a success response.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param input body LoginRequest true "Login credentials"
+// @Success 201 {object} map[string]string "User logged in successfully"
+// @Failure 400 {object} utils.CustomError "Invalid request body or user does not exist"
+// @Failure 401 {object} utils.CustomError "Invalid password"
+// @Failure 500 {object} utils.CustomError "Internal server error"
+// @Router /login [post]
 func Login(c *gin.Context) {
-	var input struct {
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=6"`
-	}
+	var input LoginRequest
 
 	if err := c.ShouldBindBodyWithJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+		c.JSON(http.StatusBadRequest, utils.New(err, http.StatusBadRequest))
 		return
 	}
 
@@ -35,10 +45,16 @@ func Login(c *gin.Context) {
 	var existing models.User
 	err := db.DB.Where("email = ?", input.Email).First(&existing).Error
 	if err == gorm.ErrRecordNotFound {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User already exists"})
+		c.JSON(http.StatusBadRequest, utils.New(
+			errors.New("user does not exist"),
+			http.StatusBadRequest,
+		))
 		return
 	} else if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Database error"})
+		c.JSON(http.StatusInternalServerError, utils.New(
+			errors.New("database error"),
+			http.StatusInternalServerError,
+		).WithDetails(err.Error()))
 		return
 	}
 	
@@ -47,9 +63,10 @@ func Login(c *gin.Context) {
 	correct_password := existing.Password
 
 	if (!utils.CheckPasswordHash(attempted_password, correct_password)) {
-		c.JSON(http.StatusUnauthorized, gin.H{
-			"error": "Invalid password",
-		})
+		c.JSON(http.StatusUnauthorized, utils.New(
+			errors.New("invalid password"),
+			http.StatusUnauthorized,
+		))
 		return
 	}
 
@@ -62,7 +79,7 @@ func Login(c *gin.Context) {
 	tokenString, err := token.SignedString([]byte(os.Getenv("JWT_SECRET")))
 
 	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Error generating token"})
+		c.JSON(http.StatusInternalServerError, utils.New(errors.New("error generating token"), http.StatusInternalServerError,).WithDetails(err.Error()))
 		return
 	}
 
@@ -71,8 +88,6 @@ func Login(c *gin.Context) {
 	// 	Token string `json:"token"`
 	// }
 	// c.JSON(http.StatusOK, loginResponse{Token: tokenString})
-
-	log.Println(tokenString)
 
 	// use cookie
 	c.SetCookie(
@@ -90,48 +105,60 @@ func Login(c *gin.Context) {
 }
 
 
-// Register godoc
-// @Summary      Register user
-// @Tags         auth
-// @Description  Register a new user
-// @Router       /register [post]
-func Register(c * gin.Context) {
-	var input struct {
-		Name     string `json:"name" binding:"required"`
-		Email    string `json:"email" binding:"required,email"`
-		Password string `json:"password" binding:"required,min=6"`
-	}
+// RegisterRequest defines the request body for user registration
+type RegisterRequest struct {
+	Name     string `json:"name" binding:"required"`
+	Email    string `json:"email" binding:"required,email"`
+	Password string `json:"password" binding:"required,min=6"`
+}
 
-	if err := c.ShouldBindBodyWithJSON(&input); err != nil {
-		c.JSON(http.StatusBadRequest, gin.H{"error": err.Error()})
+// Register godoc
+// @Summary Register a new user
+// @Description Creates a new user account with name, email, and password. Password is hashed before storing.
+// @Tags auth
+// @Accept json
+// @Produce json
+// @Param input body RegisterRequest true "Registration data"
+// @Success 201 {object} map[string]string "User registered successfully"
+// @Failure 400 {object} utils.CustomError "Invalid registration data or user already exists"
+// @Failure 500 {object} utils.CustomError "Database error or password hashing failed"
+// @Router /register [post]
+func Register(c *gin.Context) {
+	var input RegisterRequest
+
+	if err := c.ShouldBindBodyWithJSON(&input); err != nil {c.JSON(http.StatusBadRequest, utils.New(err, http.StatusBadRequest).WithDetails("Invalid registration data"))
 		return
 	}
 
 	// Check if user already exists
 	var existing models.User
 	err := db.DB.Where("email = ?", input.Email).First(&existing).Error
-	if err != gorm.ErrRecordNotFound {
-		c.JSON(http.StatusBadRequest, gin.H{"error": "User already exists"})
+	if err != nil && !errors.Is(err, gorm.ErrRecordNotFound) {
+		c.JSON(http.StatusInternalServerError, utils.New(err, http.StatusInternalServerError).WithDetails("Database error while checking user existence"))
+		return
+	}
+	if existing.ID != 0 {
+		c.JSON(http.StatusBadRequest, utils.New(errors.New("user already exists"), http.StatusBadRequest).WithDetails("Email address is already registered"))
 		return
 	}
 
-
 	// Hash password
 	hashedPassword, err := utils.HashPassword(input.Password)
-	if err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not hash password"})
+	if err != nil {c.JSON(http.StatusInternalServerError, utils.New(err, http.StatusInternalServerError).WithDetails("Could not hash password"))
 		return
 	}
 
 	// Create User
 	user := models.User{
-		Name: input.Name,
-		Email: input.Email,
+		Name:     input.Name,
+		Email:    input.Email,
 		Password: hashedPassword,
 	}
 
 	if err := db.DB.Create(&user).Error; err != nil {
-		c.JSON(http.StatusInternalServerError, gin.H{"error": "Could not crate user"})
+		c.JSON(http.StatusInternalServerError, 
+			utils.New(err, http.StatusInternalServerError).
+				WithDetails("Could not create user in database"))
 		return
 	}
 

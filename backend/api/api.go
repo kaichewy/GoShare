@@ -11,8 +11,8 @@ import (
 	"github.com/kaichewy/GoShare/backend/controllers" // import functions to be executed for the api calls
 	group "github.com/kaichewy/GoShare/backend/controllers/groups"
 	product "github.com/kaichewy/GoShare/backend/controllers/products"
-	swaggerFiles "github.com/swaggo/files"     // swagger embed files
-	ginSwagger "github.com/swaggo/gin-swagger" // gin-swagger middleware
+	"github.com/swaggo/files"       // swagger embed files
+	"github.com/swaggo/gin-swagger" // gin-swagger middleware
 )
 
 func RegisterRoutes(r *gin.Engine) {
