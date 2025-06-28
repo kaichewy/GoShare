@@ -55,14 +55,152 @@
                 }
             }
         },
+        "/groups": {
+            "post": {
+                "description": "Add a new group with an optional list of member user IDs.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Create a new group",
+                "parameters": [
+                    {
+                        "description": "Group data",
+                        "name": "group",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/group.AddGroupRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "Created",
+                        "schema": {
+                            "$ref": "#/definitions/models.Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Bad Request",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal Server Error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    }
+                }
+            }
+        },
+        "/groups/{id}": {
+            "get": {
+                "description": "Retrieve a specific group order by its ID",
+                "produces": [
+                    "application/json"
+                ],
+                "tags": [
+                    "groups"
+                ],
+                "summary": "Get a group by ID",
+                "parameters": [
+                    {
+                        "type": "integer",
+                        "description": "Group ID",
+                        "name": "id",
+                        "in": "path",
+                        "required": true
+                    }
+                ],
+                "responses": {
+                    "200": {
+                        "description": "Group data",
+                        "schema": {
+                            "$ref": "#/definitions/models.Group"
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid ID",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "404": {
+                        "description": "Group not found",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    }
+                }
+            }
+        },
         "/login": {
             "post": {
-                "description": "Log in a registered user",
+                "description": "Authenticates a user with email and password, generates a JWT, sets it as an HTTP-only cookie, and returns a success response.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Login user",
-                "responses": {}
+                "summary": "Log in a user",
+                "parameters": [
+                    {
+                        "description": "Login credentials",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.LoginRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User logged in successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid request body or user does not exist",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "401": {
+                        "description": "Invalid password",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Internal server error",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    }
+                }
             }
         },
         "/me": {
@@ -211,12 +349,51 @@
         },
         "/register": {
             "post": {
-                "description": "Register a new user",
+                "description": "Creates a new user account with name, email, and password. Password is hashed before storing.",
+                "consumes": [
+                    "application/json"
+                ],
+                "produces": [
+                    "application/json"
+                ],
                 "tags": [
                     "auth"
                 ],
-                "summary": "Register user",
-                "responses": {}
+                "summary": "Register a new user",
+                "parameters": [
+                    {
+                        "description": "Registration data",
+                        "name": "input",
+                        "in": "body",
+                        "required": true,
+                        "schema": {
+                            "$ref": "#/definitions/controllers.RegisterRequest"
+                        }
+                    }
+                ],
+                "responses": {
+                    "201": {
+                        "description": "User registered successfully",
+                        "schema": {
+                            "type": "object",
+                            "additionalProperties": {
+                                "type": "string"
+                            }
+                        }
+                    },
+                    "400": {
+                        "description": "Invalid registration data or user already exists",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    },
+                    "500": {
+                        "description": "Database error or password hashing failed",
+                        "schema": {
+                            "$ref": "#/definitions/utils.CustomError"
+                        }
+                    }
+                }
             }
         },
         "/user/{id}": {
@@ -267,6 +444,44 @@
         }
     },
     "definitions": {
+        "controllers.LoginRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string",
+                    "example": "user@example.com"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6,
+                    "example": "password123"
+                }
+            }
+        },
+        "controllers.RegisterRequest": {
+            "type": "object",
+            "required": [
+                "email",
+                "name",
+                "password"
+            ],
+            "properties": {
+                "email": {
+                    "type": "string"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string",
+                    "minLength": 6
+                }
+            }
+        },
         "gorm.DeletedAt": {
             "type": "object",
             "properties": {
@@ -276,6 +491,58 @@
                 "valid": {
                     "description": "Valid is true if Time is not NULL",
                     "type": "boolean"
+                }
+            }
+        },
+        "group.AddGroupRequest": {
+            "type": "object",
+            "required": [
+                "name",
+                "product_id"
+            ],
+            "properties": {
+                "member_ids": {
+                    "type": "array",
+                    "items": {
+                        "type": "integer"
+                    }
+                },
+                "name": {
+                    "type": "string"
+                },
+                "product_id": {
+                    "type": "integer"
+                }
+            }
+        },
+        "models.Group": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "members": {
+                    "type": "array",
+                    "items": {
+                        "$ref": "#/definitions/models.User"
+                    }
+                },
+                "name": {
+                    "description": "e.g., \"Friday Lunch Group\"",
+                    "type": "string"
+                },
+                "productID": {
+                    "description": "FK to Product",
+                    "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
                 }
             }
         },
@@ -308,6 +575,32 @@
                 },
                 "quantity": {
                     "type": "integer"
+                },
+                "updatedAt": {
+                    "type": "string"
+                }
+            }
+        },
+        "models.User": {
+            "type": "object",
+            "properties": {
+                "createdAt": {
+                    "type": "string"
+                },
+                "deletedAt": {
+                    "$ref": "#/definitions/gorm.DeletedAt"
+                },
+                "email": {
+                    "type": "string"
+                },
+                "id": {
+                    "type": "integer"
+                },
+                "name": {
+                    "type": "string"
+                },
+                "password": {
+                    "type": "string"
                 },
                 "updatedAt": {
                     "type": "string"
