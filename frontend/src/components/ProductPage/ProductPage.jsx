@@ -1,6 +1,7 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
 import './ProductPage.css';
+import { useParams } from 'react-router-dom';
 
 export default function ProductPage({ backButton }) {
   const [activeTab, setActiveTab] = useState('collaboration');
@@ -8,6 +9,10 @@ export default function ProductPage({ backButton }) {
   const [selectedDelivery, setSelectedDelivery] = useState('Standard (3-5 days)');
   const [selectedGrade, setSelectedGrade] = useState('Premium');
 
+  const { productID } = useParams()
+
+  console.log(productID)
+  // groups
   const collaborationOrders = [
     {
       business: 'Metro Cafe Chain',

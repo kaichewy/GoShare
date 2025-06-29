@@ -34,7 +34,7 @@ function App() {
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />
           <Route path="/delivery" element={<DeliveryView />} />
-          <Route path="/product" element={<ProductView />} />
+          <Route path="/product/:productID" element={<ProductView />} />
           <Route path="*" element={<ErrorView />} />
         </Routes>
         <footer>
