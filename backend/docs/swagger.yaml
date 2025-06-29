@@ -147,8 +147,11 @@ definitions:
     type: object
 host: localhost:8080
 info:
-  contact: {}
-  description: API documentation
+  contact:
+    email: kai.cyk@gmail.com
+    name: Kai Chew
+    url: https://github.com/kaichewy/GoShare
+  description: This is the REST API documentation for the GoShare application.
   title: GoShare API
   version: "1.0"
 paths:
@@ -354,7 +357,20 @@ paths:
       - products
   /products:
     get:
-      description: Retrieve all products from the database
+      consumes:
+      - application/json
+      description: Retrieves a batch of products using limit and offset for pagination
+      parameters:
+      - default: 20
+        description: Maximum number of products to return
+        in: query
+        name: limit
+        type: integer
+      - default: 0
+        description: Number of products to skip
+        in: query
+        name: offset
+        type: integer
       produces:
       - application/json
       responses:
@@ -364,13 +380,19 @@ paths:
             items:
               $ref: '#/definitions/responses.ProductResponse'
             type: array
-        "500":
-          description: Internal Server Error
+        "400":
+          description: Invalid limit or offset
           schema:
             additionalProperties:
               type: string
             type: object
-      summary: Get all products
+        "500":
+          description: Failed to fetch products
+          schema:
+            additionalProperties:
+              type: string
+            type: object
+      summary: Get paginated products
       tags:
       - products
   /register:

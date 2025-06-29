@@ -1,8 +1,15 @@
-// @title GoShare API
-// @version 1.0
-// @description API documentation
-// @host localhost:8080
-// @BasePath /
+// @title           GoShare API
+// @version         1.0
+// @description     This is the REST API documentation for the GoShare application.
+
+// @contact.name   Kai Chew
+// @contact.number (+65) 98729739
+// @contact.url    https://github.com/kaichewy/GoShare
+// @contact.email  kai.cyk@gmail.com
+
+// @host      localhost:8080
+// @BasePath  /
+
 package api
 
 import (
