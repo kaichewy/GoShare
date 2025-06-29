@@ -1,20 +1,11 @@
 package db
 
 import (
-<<<<<<< HEAD
     "fmt"
     "os"
     "github.com/kaichewy/GoShare/backend/models"
     "gorm.io/driver/postgres"
     "gorm.io/gorm"
-=======
-	"fmt"
-	"os"
-
-	"github.com/kaichewy/GoShare/backend/models"
-	"gorm.io/driver/postgres"
-	"gorm.io/gorm"
->>>>>>> ef2b85ed07c9c60db9ceee33b2ef111b64131046
 )
 
 var DB *gorm.DB
@@ -26,17 +17,10 @@ func Connect() {
     password := os.Getenv("DB_PASSWORD")
     dbname := os.Getenv("DB_NAME")
 
-<<<<<<< HEAD
     dsn := fmt.Sprintf(
         "host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Singapore",
         host, user, password, dbname, port,
     )
-=======
-	dsn := fmt.Sprintf(
-		"host=%s user=%s password=%s dbname=%s port=%s sslmode=disable TimeZone=Asia/Singapore",
-		host, user, password, dbname, port,
-	)
->>>>>>> ef2b85ed07c9c60db9ceee33b2ef111b64131046
 
     var err error
     DB, err = gorm.Open(postgres.Open(dsn), &gorm.Config{})
@@ -55,17 +39,12 @@ func Connect() {
         panic("Failed to migrate models: " + err.Error())
     }
 
-<<<<<<< HEAD
     // Seed product data for testing
     seedProductData()
-=======
-	err = DB.AutoMigrate(&models.User{}, &models.Product{}, &models.Group{})
->>>>>>> ef2b85ed07c9c60db9ceee33b2ef111b64131046
 
     fmt.Print("Database connected! :)")
 }
 
-<<<<<<< HEAD
 // Add seed function for your product data
 func seedProductData() {
     // Check if products already exist
@@ -110,9 +89,5 @@ func seedProductData() {
         }
 
         fmt.Println("Sample product data seeded!")
-    }
+	}
 }
-=======
-	fmt.Print("Database connected! :)")
-}
->>>>>>> ef2b85ed07c9c60db9ceee33b2ef111b64131046
