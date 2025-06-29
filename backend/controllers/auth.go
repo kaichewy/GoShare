@@ -2,6 +2,7 @@ package controllers
 
 import (
 	"errors"
+	"log"
 	"net/http"
 	"os"
 	"strings"
@@ -99,6 +100,8 @@ func Login(c *gin.Context) {
 		true,
 		true,
 	)
+
+	log.Println(tokenString)
 
 	// optional: return success message
 	c.JSON(http.StatusOK, gin.H{"message": "Logged in successfully"})
