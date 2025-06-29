@@ -1,4 +1,5 @@
 import girlHeadphones from "@/assets/images/girl_headphones.png";
+import { Link } from 'react-router-dom';
 import "./Banner.css";
 
 const Banner = () => {
@@ -10,9 +11,9 @@ const Banner = () => {
             Grab upto 50% off on <br></br>selected Headphones
           </h1>
           <span className="is-buy-now">
-            <a href="#products">
+            <Link to="/product">
               <button className="btn-rounded buy-now">Buy Now</button>
-            </a>
+            </Link>
           </span>
         </div>
         <div className="subject">
