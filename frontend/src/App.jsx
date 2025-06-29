@@ -25,9 +25,6 @@ function App() {
   return (
     <div>
       <BrowserRouter>
-        <header>
-          <NavBar></NavBar>
-        </header>
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />
@@ -35,9 +32,6 @@ function App() {
           <Route path="/profile" element={<ProfileView />} />
           <Route path="*" element={<ErrorView />} />
         </Routes>
-        <footer>
-          <ShopFooter></ShopFooter>
-        </footer>
       </BrowserRouter>
       {modal.opened && (
         <Modal

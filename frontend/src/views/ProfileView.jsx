@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import Sidebar from '@/components/Sidebar';
-import StatusView from '@/components/StatusView';
+import Sidebar from '@/components/Sidebar/Sidebar';
+import StatusView from '@/components/StatusView/StatusView';
 
 export default function ProfileView() {
   // start on “status” tab by default
