@@ -6,6 +6,13 @@
   overflow: hidden;
   border: 1px solid #ddd;
   font-family: sans-serif;
+  transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Hover effect */
+.product-card:hover {
+  transform: scale(1.03); /* Enlarge by 3% - adjust as desired (e.g., 1.02 for 2%, 1.05 for 5%) */
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2); /* Make the shadow more pronounced on hover */
 }
 
 .product-image {

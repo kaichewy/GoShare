@@ -14,6 +14,7 @@ import Modal from "./components/Modals/Modal";
 import CancelOrder from "./components/Modals/CancelOrder";
 import "react-toastify/dist/ReactToastify.css";
 import RequestCookie from "./components/CookieBanner/CookieBanner";
+import Sidebar from "./components/Sidebar/Sidebar";
 
 function App() {
   let { store } = useGlobalContext();
@@ -26,12 +27,14 @@ function App() {
   
   return (
     <div>
+      
       <BrowserRouter>
+        <Sidebar></Sidebar>
         <Routes>
           <Route path="/" element={<HomeView />} />
           <Route path="/cart" element={<CartView />} />
           <Route path="/delivery" element={<DeliveryView />} />
-          <Route path="/product" element={<ProductView />} />
+          <Route path="/product/:productID" element={<ProductView />} />
           <Route path="*" element={<ErrorView />} />
         </Routes>
         <footer>
