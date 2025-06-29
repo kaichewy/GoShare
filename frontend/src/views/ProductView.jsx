@@ -1,4 +1,4 @@
-import ProductPage from '@/components/Products/ProductPage/ProductPage';
+import ProductPage from '@/components/ProductPage/ProductPage';
 
 function ProductView() {
   return <ProductPage />; 

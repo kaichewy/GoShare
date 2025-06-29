@@ -1,5 +1,5 @@
 import React from 'react';
-import Product from './Product/Product';
+import Product from './ProductCard/Product';
 import './ProductGrid.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
 //import { TailSpin } from 'react-loader-spinner';
