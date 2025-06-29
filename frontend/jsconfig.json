@@ -1,6 +1,10 @@
 {
   "include": ["src/**/*"],
   "compilerOptions": {
+    "moduleResolution": "node",
+    "esModuleInterop":   true,
+    "skipLibCheck":      true,
+    "jsx": "react",
     "baseUrl": ".",
     "paths": {
       "@/*": ["src/*"]
