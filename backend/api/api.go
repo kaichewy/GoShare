@@ -1,8 +1,15 @@
-// @title GoShare API
-// @version 1.0
-// @description API documentation
-// @host localhost:8080
-// @BasePath /
+// @title           GoShare API
+// @version         1.0
+// @description     This is the REST API documentation for the GoShare application.
+
+// @contact.name   Kai Chew
+// @contact.number (+65) 98729739
+// @contact.url    https://github.com/kaichewy/GoShare
+// @contact.email  kai.cyk@gmail.com
+
+// @host      localhost:8080
+// @BasePath  /
+
 package api
 
 import (
@@ -10,9 +17,9 @@ import (
 	"github.com/gin-gonic/gin"
 	"github.com/kaichewy/GoShare/backend/controllers" // import functions to be executed for the api calls
 	group "github.com/kaichewy/GoShare/backend/controllers/groups"
-	product "github.com/kaichewy/GoShare/backend/controllers/products"
-	"github.com/swaggo/files"       // swagger embed files
-	"github.com/swaggo/gin-swagger" // gin-swagger middleware
+	product "github.com/kaichewy/GoShare/backend/controllers/products" // swagger embed files
+	swaggerFiles "github.com/swaggo/files"                             // swagger embed files
+	ginSwagger "github.com/swaggo/gin-swagger"                         // gin-swagger middleware
 )
 
 func RegisterRoutes(r *gin.Engine) {
@@ -25,8 +32,6 @@ func RegisterRoutes(r *gin.Engine) {
 	}))
 	// Swagger
 	r.GET("/swagger/*any", ginSwagger.WrapHandler(swaggerFiles.Handler))
-
-	// Ping
 	r.GET("/ping", controllers.Ping)
 
 	// User Info
