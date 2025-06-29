@@ -29,9 +29,16 @@ func Connect() {
 		panic("Failed to connect to DB: " + err.Error())
 	}
 
-	err = DB.AutoMigrate(&models.User{}, &models.Product{}, &models.Group{})
+	err = DB.AutoMigrate(
+		&models.User{}, 
+		&models.Product{}, 
+		&models.Group{},
+		&models.GroupMember{},
+		&models.CollaborationOrder{},
+		//&models.CollaborationOrderItem{},
+		//&models.CollaborationOrderPayment{},
+	)
 
-	// Add your new models to existing migration
 	if err != nil {
 		panic("Failed to migrate models: " + err.Error())
 	}

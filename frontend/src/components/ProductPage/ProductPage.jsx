@@ -1,41 +1,181 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import './ProductPage.css';
 import { useParams } from 'react-router-dom';
+import axios from 'axios';
 
-export default function ProductPage({ backButton }) {
+export default function ProductPage() {
   const [activeTab, setActiveTab] = useState('collaboration');
   const [selectedQuantity, setSelectedQuantity] = useState('25 Cases');
   const [selectedDelivery, setSelectedDelivery] = useState('Standard (3-5 days)');
-  const [selectedGrade, setSelectedGrade] = useState('Premium');
 
-  const { productID } = useParams()
+  const [product, setProduct] = useState(null);
+  const [groups, setGroups] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [groupsLoading, setGroupsLoading] = useState(false);
+  const [error, setError] = useState(null);
+  const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [newGroupData, setNewGroupData] = useState({
+    business_name: '',
+    target_quantity: 25,
+    location: '',
+    delivery_date: '',
+    description: ''
+  });
 
-  console.log(productID)
-  // groups
-  const collaborationOrders = [
-    {
-      business: 'Metro Cafe Chain',
-      ordered: 6,
-      needed: 4,
-      location: 'Downtown',
-      delivery: 'Tuesday'
-    },
-    {
-      business: 'Bright Start Academy',
-      ordered: 18,
-      needed: 7,
-      location: 'Westside',
-      delivery: 'Thursday'
-    },
-    {
-      business: 'Design Studio Pro',
-      ordered: 22,
-      needed: 3,
-      location: 'Business District',
-      delivery: 'Friday'
+  const { productID } = useParams();
+
+  // Fetch product data from backend
+  useEffect(() => {
+    const fetchProduct = async () => {
+      try {
+        setLoading(true);
+        setError(null);
+        const response = await axios.get(`http://localhost:8080/products/${productID}`);
+        setProduct(response.data);
+      } catch (error) {
+        console.error('Error fetching product:', error);
+        setError('Failed to load product');
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    if (productID) {
+      fetchProduct();
     }
-  ];
+  }, [productID]);
+
+  // Fetch groups for this product
+  useEffect(() => {
+    const fetchGroups = async () => {
+      if (!productID) return;
+      
+      try {
+        setGroupsLoading(true);
+        const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
+        setGroups(response.data || []);
+      } catch (error) {
+        console.error('Error fetching groups:', error);
+        setGroups([]); // Set empty array on error
+      } finally {
+        setGroupsLoading(false);
+      }
+    };
+
+    fetchGroups();
+  }, [productID]);
+
+  // Join a group
+  const handleJoinGroup = async (groupId) => {
+    try {
+      const token = localStorage.getItem('token'); // Adjust based on your auth implementation
+      await axios.post(`http://localhost:8080/groups/${groupId}/join`, {}, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+      
+      // Refresh groups after joining
+      const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
+      setGroups(response.data || []);
+      
+      alert('Successfully joined the group!');
+    } catch (error) {
+      console.error('Error joining group:', error);
+      alert('Failed to join group. Please try again.');
+    }
+  };
+
+  // Create a new group
+  const handleCreateGroup = async (e) => {
+    e.preventDefault();
+    
+    try {
+      const token = localStorage.getItem('token'); // Adjust based on your auth implementation
+      console.log('Token:', token);
+      
+      const groupData = {
+        ...newGroupData,
+        product_id: parseInt(productID),
+        current_quantity: 0
+      };
+
+      await axios.post('http://localhost:8080/addGroup', groupData, {
+        headers: {
+          Authorization: `Bearer ${token}`
+        }
+      });
+
+      // Refresh groups after creating
+      const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
+      setGroups(response.data || []);
+      
+      // Reset form and hide modal
+      setNewGroupData({
+        business_name: '',
+        target_quantity: 25,
+        location: '',
+        delivery_date: '',
+        description: ''
+      });
+      setShowCreateGroup(false);
+      
+      alert('Group created successfully!');
+    } catch (error) {
+      console.error('Error creating group:', error);
+      alert('Failed to create group. Please try again.');
+    }
+  };
+
+  // Calculate progress percentage
+  const getProgressPercentage = (current, target) => {
+    return target > 0 ? Math.min((current / target) * 100, 100) : 0;
+  };
+
+  // Format date for display
+  const formatDate = (dateString) => {
+    if (!dateString) return 'TBD';
+    const date = new Date(dateString);
+    return date.toLocaleDateString('en-US', { 
+      weekday: 'long', 
+      year: 'numeric', 
+      month: 'long', 
+      day: 'numeric' 
+    });
+  };
+
+  if (loading) {
+    return (
+      <div className="product-page">
+        <div className="container">
+          <div className="loading">Loading product...</div>
+        </div>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="product-page">
+        <div className="container">
+          <div className="error">{error}</div>
+          <Link to="/" className="back-button">← Back to products</Link>
+        </div>
+      </div>
+    );
+  }
+
+  if (!product) {
+    return (
+      <div className="product-page">
+        <div className="container">
+          <div className="error">Product not found</div>
+          <Link to="/" className="back-button">← Back to products</Link>
+        </div>
+      </div>
+    );
+  }
 
   const TabButton = ({ label, tabKey, isActive, onClick }) => (
     <button
@@ -63,42 +203,42 @@ export default function ProductPage({ backButton }) {
           {/* Product Section */}
           <div className="product-section">
             <Link to="/" className="back-button">
-              ← Back to office supplies
+              ← Back to products
             </Link>
 
             {/* Product Image */}
             <div className="product-image">
               <img 
-                src="https://images.unsplash.com/photo-1586281380349-632531db7ed4?w=400&h=300&fit=crop&crop=center" 
-                alt="Premium Copy Paper - Professional grade A4 white"
+                src={product.ImageURL} 
+                alt={product.Name}
                 className="product-main-image"
               />
             </div>
 
-            {/* Product Specifications */}
-            <div className="product-specs">
-              <h3>Product Specifications</h3>
-              <div className="specs-list">
-                <div><span className="spec-label">Paper Weight:</span> 80gsm premium quality</div>
-                <div><span className="spec-label">Compatibility:</span> All inkjet and laser printers</div>
-                <div><span className="spec-label">Certification:</span> FSC certified sustainable source</div>
-                <div><span className="spec-label">Pack Size:</span> 5 reams per case (2,500 sheets)</div>
-                <div><span className="spec-label">Sheet Size:</span> A4 (210 × 297 mm)</div>
-                <div><span className="spec-label">Brightness:</span> 96% ISO brightness rating</div>
+            {/* Product Description */}
+            {product.Description && (
+              <div className="product-specs">
+                <h3>Product Description</h3>
+                <p>{product.Description}</p>
               </div>
-            </div>
+            )}
           </div>
 
           {/* Details Section */}
           <div className="details-section">
-            <div className="breadcrumb">OFFICE SUPPLIES</div>
-            <h1 className="product-title">Premium Copy Paper</h1>
+            <div className="breadcrumb">{product.Category || 'PRODUCTS'}</div>
+            <h1 className="product-title">{product.Name}</h1>
 
-            {/* Rating */}
-            <div className="rating">
-              <div className="stars">★★★★★</div>
-              <div className="rating-text">4.8 (156 business reviews)</div>
-            </div>
+            {/* Rating - only show if available */}
+            {(product.rating || product.reviews) && (
+              <div className="rating">
+                <div className="stars">★★★★★</div>
+                <div className="rating-text">
+                  {product.rating || 'N/A'} 
+                  {product.reviews && ` (${product.reviews} reviews)`}
+                </div>
+              </div>
+            )}
 
             {/* Order Quantity */}
             <div className="option-group">
@@ -130,46 +270,12 @@ export default function ProductPage({ backButton }) {
               </div>
             </div>
 
-            {/* Paper Grade */}
-            <div className="option-group">
-              <div className="option-label">Paper Grade</div>
-              <div className="option-buttons">
-                {['Basic', 'Premium', 'Ultra'].map((grade) => (
-                  <OptionButton
-                    key={grade}
-                    label={grade}
-                    isActive={selectedGrade === grade}
-                    onClick={() => setSelectedGrade(grade)}
-                  />
-                ))}
-              </div>
-            </div>
 
-            {/* Bulk Pricing */}
-            <div className="bulk-pricing">
-              <div className="bulk-pricing-title">Bulk Pricing (Per Case)</div>
-              <div className="pricing-tier">
-                <span>10-24 cases</span>
-                <span className="price">$12.50</span>
-              </div>
-              <div className="pricing-tier">
-                <span>25-49 cases</span>
-                <span className="price">
-                  $10.75 <span className="savings-badge">Save 14%</span>
-                </span>
-              </div>
-              <div className="pricing-tier">
-                <span>50+ cases</span>
-                <span className="price">
-                  $9.25 <span className="savings-badge">Save 26%</span>
-                </span>
-              </div>
-            </div>
 
             {/* Tabs */}
             <div className="tabs">
               <TabButton
-                label="Active Orders"
+                label="Active Groups"
                 tabKey="collaboration"
                 isActive={activeTab === 'collaboration'}
                 onClick={setActiveTab}
@@ -185,72 +291,180 @@ export default function ProductPage({ backButton }) {
             {/* Tab Content */}
             {activeTab === 'collaboration' && (
               <div className="tab-content">
-                {collaborationOrders.map((order, index) => (
-                  <div key={index} className="collaboration-card">
-                    <div className="collaboration-header">
-                      <div className="business-name">{order.business}</div>
-                      <button className="join-button">Join Order</button>
-                    </div>
-                    <div className="collaboration-details">
-                      <div>{order.ordered} cases ordered • Needs {order.needed} more for bulk pricing</div>
-                      <div>📍 {order.location} • Delivery: {order.delivery}</div>
-                    </div>
+                <div className="groups-header">
+                  <h3>Active Group Orders</h3>
+                  <button 
+                    className="create-group-button"
+                    onClick={() => setShowCreateGroup(true)}
+                  >
+                    + Create New Group
+                  </button>
+                </div>
+
+                {groupsLoading ? (
+                  <div className="loading">Loading groups...</div>
+                ) : groups.length > 0 ? (
+                  <div className="groups-list">
+                    {groups.map((group) => (
+                      <div key={group.id} className="collaboration-card">
+                        <div className="collaboration-header">
+                          <div className="business-name">{group.business_name}</div>
+                          <button 
+                            className="join-button"
+                            onClick={() => handleJoinGroup(group.id)}
+                          >
+                            Join Order
+                          </button>
+                        </div>
+                        <div className="collaboration-details">
+                          <div>
+                            {group.current_quantity} cases ordered • 
+                            Needs {Math.max(0, group.target_quantity - group.current_quantity)} more for target
+                          </div>
+                          <div>📍 {group.location} • Delivery: {formatDate(group.delivery_date)}</div>
+                          {group.description && <div className="group-description">{group.description}</div>}
+                        </div>
+                        <div className="progress-bar">
+                          <div 
+                            className="progress-fill"
+                            style={{ width: `${getProgressPercentage(group.current_quantity, group.target_quantity)}%` }}
+                          ></div>
+                        </div>
+                        <div className="progress-text">
+                          {group.current_quantity} / {group.target_quantity} cases 
+                          ({Math.round(getProgressPercentage(group.current_quantity, group.target_quantity))}%)
+                        </div>
+                      </div>
+                    ))}
                   </div>
-                ))}
+                ) : (
+                  <div className="collaboration-placeholder">
+                    <p>No active group orders for this product yet.</p>
+                    <p>Be the first to start a group order!</p>
+                  </div>
+                )}
               </div>
             )}
 
             {activeTab === 'delivery' && (
               <div className="tab-content">
-                <div className="delivery-card">
-                  <div className="delivery-title">🚚 Shared Delivery Available</div>
-                  <div className="delivery-description">
-                    Split shipping costs with nearby businesses<br />
-                    Standard: $45 | Shared: $25 per location
+                <div className="delivery-info">
+                  <h4>🚚 Shared Delivery Benefits</h4>
+                  <p>Join a group order to split delivery costs with nearby businesses!</p>
+                  
+                  <div className="delivery-benefits">
+                    <div className="benefit-item">
+                      <strong>Cost Savings:</strong> Split shipping costs among group members
+                    </div>
+                    <div className="benefit-item">
+                      <strong>Environmental Impact:</strong> Fewer delivery trips, reduced carbon footprint
+                    </div>
+                    <div className="benefit-item">
+                      <strong>Flexible Delivery:</strong> Choose delivery windows that work for your business
+                    </div>
                   </div>
-                </div>
-                
-                <div className="delivery-card">
-                  <div className="delivery-title">📅 Next Shared Routes</div>
-                  <div className="delivery-description">
-                    <div>Tuesday, June 25 - Downtown/Westside</div>
-                    <div>Thursday, June 27 - Business District</div>
-                    <div>Friday, June 28 - Industrial Area</div>
-                  </div>
+
+                  {groups.length > 0 && (
+                    <div className="upcoming-deliveries">
+                      <h4>📅 Upcoming Group Deliveries</h4>
+                      {groups.map((group) => (
+                        <div key={group.id} className="delivery-item">
+                          <span>{group.business_name}</span>
+                          <span>{formatDate(group.delivery_date)}</span>
+                          <span>{group.location}</span>
+                        </div>
+                      ))}
+                    </div>
+                  )}
                 </div>
               </div>
             )}
 
-            {/* Add-ons */}
-            <div className="add-ons">
-              <div className="add-ons-title">Quick Add-Ons</div>
-              <div className="add-on-item">
-                <span>+ Express delivery upgrade</span>
-                <span className="add-on-price">+$25</span>
-              </div>
-              <div className="add-on-item">
-                <span>+ Delivery coordination service</span>
-                <span className="add-on-price">+$15</span>
-              </div>
-            </div>
-
             {/* Price and CTA */}
             <div className="price-section">
               <div className="final-price">
-                $268.75
-                <span className="total-savings">Save $80.25</span>
+                ${product.Price}
               </div>
               
-              <button className="add-to-cart">
-                Start Collaboration Order (25)
+              <button 
+                className="add-to-cart"
+                onClick={() => setShowCreateGroup(true)}
+              >
+                Start Group Order
               </button>
               
-              <a href="#" className="product-details-link">
-                See full product details
-              </a>
+              <Link to="/" className="product-details-link">
+                Back to all products
+              </Link>
             </div>
           </div>
         </div>
+
+        {/* Create Group Modal */}
+        {showCreateGroup && (
+          <div className="modal-overlay" onClick={() => setShowCreateGroup(false)}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2>Create New Group Order</h2>
+              <form onSubmit={handleCreateGroup}>
+                <div className="form-group">
+                  <label>Business Name</label>
+                  <input
+                    type="text"
+                    value={newGroupData.business_name}
+                    onChange={(e) => setNewGroupData({...newGroupData, business_name: e.target.value})}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Target Quantity (cases)</label>
+                  <input
+                    type="number"
+                    value={newGroupData.target_quantity}
+                    onChange={(e) => setNewGroupData({...newGroupData, target_quantity: parseInt(e.target.value)})}
+                    min="1"
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Location</label>
+                  <input
+                    type="text"
+                    value={newGroupData.location}
+                    onChange={(e) => setNewGroupData({...newGroupData, location: e.target.value})}
+                    required
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Preferred Delivery Date</label>
+                  <input
+                    type="date"
+                    value={newGroupData.delivery_date}
+                    onChange={(e) => setNewGroupData({...newGroupData, delivery_date: e.target.value})}
+                  />
+                </div>
+                
+                <div className="form-group">
+                  <label>Description (optional)</label>
+                  <textarea
+                    value={newGroupData.description}
+                    onChange={(e) => setNewGroupData({...newGroupData, description: e.target.value})}
+                    rows="3"
+                  />
+                </div>
+                
+                <div className="form-actions">
+                  <button type="button" onClick={() => setShowCreateGroup(false)}>
+                    Cancel
+                  </button>
+                  <button type="submit">Create Group</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );

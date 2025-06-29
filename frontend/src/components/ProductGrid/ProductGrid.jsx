@@ -2,7 +2,7 @@ import React from 'react';
 import Product from './ProductCard/Product';
 import './ProductGrid.css';
 import InfiniteScroll from 'react-infinite-scroll-component';
-//import { TailSpin } from 'react-loader-spinner';
+import { TailSpin } from 'react-loader-spinner';
 
 const ProductGrid = ({ products, fetchMore, hasMore }) => {
   //assuming products is the list of groups that are currently active

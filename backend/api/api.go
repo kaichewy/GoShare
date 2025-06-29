@@ -52,8 +52,9 @@ func RegisterRoutes(r *gin.Engine) {
 	r.GET("/productsLimited", product.GetProductsLimited)
 	r.POST("/addProduct", product.AddProduct)
 
-	// Group
-	authorized.POST("/addGroup", group.AddGroup)
-	authorized.GET("/group/:id", group.GetGroup)
-
+    // Groups
+    r.GET("/groups/product/:productId", group.GetGroupsByProduct)
+    r.POST("/addGroup", group.AddGroup)
+    r.GET("/group/:id", group.GetGroup)
+    r.POST("/groups/:id/join", group.JoinGroup)  
 }

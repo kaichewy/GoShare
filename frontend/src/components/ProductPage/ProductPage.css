@@ -1,4 +1,4 @@
-/* ProductPage.css - GoTrade Color Scheme */
+/* ProductPage.css */
 
 .product-page {
     display: flex;
@@ -306,11 +306,56 @@ body, html {
     margin-bottom: 30px;
 }
 
+/* Groups Header */
+.groups-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+    padding-bottom: 20px;
+    border-bottom: 2px solid #f3f4f6;
+}
+
+.groups-header h3 {
+    font-size: 20px;
+    font-weight: 700;
+    color: #111827;
+    margin: 0;
+}
+
+.create-group-button {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+    border: none;
+    padding: 12px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 13px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    transition: all 0.3s ease;
+    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+
+.create-group-button:hover {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+}
+
+/* Groups List */
+.groups-list {
+    display: flex;
+    flex-direction: column;
+    gap: 18px;
+}
+
 .collaboration-card {
     background: white;
     border-radius: 16px;
     padding: 25px;
-    margin-bottom: 18px;
+    margin-bottom: 0;
     border: 2px solid #f3f4f6;
     transition: all 0.3s ease;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
@@ -364,6 +409,43 @@ body, html {
     margin-bottom: 6px;
 }
 
+/* Group-specific details */
+.group-description {
+    font-style: italic;
+    margin-top: 10px;
+    color: #6b7280;
+    padding: 12px;
+    background: #f8f9fb;
+    border-radius: 8px;
+    border-left: 3px solid #4ade80;
+}
+
+/* Progress Bar */
+.progress-bar {
+    width: 100%;
+    height: 10px;
+    background: linear-gradient(135deg, #f3f4f6, #e5e7eb);
+    border-radius: 20px;
+    overflow: hidden;
+    margin: 15px 0 8px 0;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    border-radius: 20px;
+    transition: width 0.5s ease;
+    box-shadow: 0 2px 8px rgba(74, 222, 128, 0.3);
+}
+
+.progress-text {
+    font-size: 13px;
+    color: #6b7280;
+    text-align: right;
+    font-weight: 600;
+}
+
 /* Delivery Cards */
 .delivery-card {
     background: white;
@@ -389,6 +471,77 @@ body, html {
 
 .delivery-description > div {
     margin-bottom: 6px;
+}
+
+/* Delivery Info Styling */
+.delivery-info h4 {
+    color: #111827;
+    margin-bottom: 15px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.delivery-info p {
+    color: #6b7280;
+    margin-bottom: 20px;
+    line-height: 1.6;
+}
+
+.delivery-benefits {
+    margin: 25px 0;
+}
+
+.benefit-item {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: 12px;
+    border-left: 4px solid #4ade80;
+    transition: all 0.3s ease;
+}
+
+.benefit-item:hover {
+    transform: translateX(5px);
+    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.1);
+}
+
+.benefit-item strong {
+    color: #166534;
+    font-weight: 700;
+}
+
+.upcoming-deliveries {
+    margin-top: 30px;
+    border-top: 2px solid #f3f4f6;
+    padding-top: 25px;
+}
+
+.upcoming-deliveries h4 {
+    color: #111827;
+    margin-bottom: 20px;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.delivery-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 12px 15px;
+    border-bottom: 1px solid #f3f4f6;
+    border-radius: 8px;
+    margin-bottom: 8px;
+    background: white;
+    transition: all 0.3s ease;
+}
+
+.delivery-item:hover {
+    background: #f8f9fb;
+    transform: translateX(5px);
+}
+
+.delivery-item:last-child {
+    border-bottom: none;
 }
 
 /* Add-ons */
@@ -489,6 +642,166 @@ body, html {
     color: #4ade80;
 }
 
+/* Modal Styles */
+.modal-overlay {
+    position: fixed;
+    top: 0;
+    left: 0;
+    right: 0;
+    bottom: 0;
+    background: rgba(0, 0, 0, 0.6);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    z-index: 1000;
+    backdrop-filter: blur(4px);
+}
+
+.modal-content {
+    background: white;
+    padding: 35px;
+    border-radius: 20px;
+    width: 90%;
+    max-width: 520px;
+    max-height: 90vh;
+    overflow-y: auto;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+    border: 2px solid #f3f4f6;
+}
+
+.modal-content h2 {
+    margin-bottom: 25px;
+    color: #111827;
+    text-align: center;
+    font-size: 24px;
+    font-weight: 800;
+}
+
+/* Form Styles */
+.form-group {
+    margin-bottom: 25px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 10px;
+    font-weight: 600;
+    color: #374151;
+    font-size: 14px;
+}
+
+.form-group input,
+.form-group textarea {
+    width: 100%;
+    padding: 15px;
+    border: 2px solid #e5e7eb;
+    border-radius: 12px;
+    font-size: 14px;
+    box-sizing: border-box;
+    transition: all 0.3s ease;
+    font-family: inherit;
+}
+
+.form-group input:focus,
+.form-group textarea:focus {
+    outline: none;
+    border-color: #4ade80;
+    box-shadow: 0 0 0 3px rgba(74, 222, 128, 0.1);
+    background: #f0fdf4;
+}
+
+.form-group textarea {
+    resize: vertical;
+    min-height: 80px;
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: flex-end;
+    margin-top: 35px;
+    padding-top: 25px;
+    border-top: 2px solid #f3f4f6;
+}
+
+.form-actions button {
+    padding: 15px 25px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    min-width: 120px;
+    font-size: 14px;
+    transition: all 0.3s ease;
+}
+
+.form-actions button[type="button"] {
+    background: #f3f4f6;
+    color: #6b7280;
+    border: 2px solid #e5e7eb;
+}
+
+.form-actions button[type="button"]:hover {
+    background: #e5e7eb;
+    color: #374151;
+    transform: translateY(-1px);
+}
+
+.form-actions button[type="submit"] {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+    color: white;
+    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+}
+
+.form-actions button[type="submit"]:hover {
+    background: linear-gradient(135deg, #22c55e, #16a34a);
+    transform: translateY(-1px);
+    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+}
+
+/* Enhanced Loading and Error States */
+.loading {
+    text-align: center;
+    padding: 50px;
+    color: #6b7280;
+    font-size: 16px;
+    font-weight: 500;
+    background: #f8f9fb;
+    border-radius: 16px;
+    border: 2px solid #f3f4f6;
+}
+
+.error {
+    text-align: center;
+    padding: 50px;
+    color: #dc2626;
+    font-size: 16px;
+    font-weight: 600;
+    background: #fef2f2;
+    border-radius: 16px;
+    border: 2px solid #fecaca;
+}
+
+.collaboration-placeholder {
+    text-align: center;
+    padding: 50px;
+    color: #6b7280;
+    background: linear-gradient(135deg, #f8f9fb, #f0fdf4);
+    border-radius: 16px;
+    margin: 20px 0;
+    border: 2px solid #e5e7eb;
+}
+
+.collaboration-placeholder p {
+    margin-bottom: 10px;
+    line-height: 1.6;
+}
+
+.collaboration-placeholder p:first-child {
+    font-weight: 600;
+    color: #374151;
+}
+
 /* Responsive Design */
 @media (max-width: 768px) {
     .product-page::-webkit-scrollbar {
@@ -530,5 +843,78 @@ body, html {
 
     .details-section {
         padding: 20px;
+    }
+
+    .groups-header {
+        flex-direction: column;
+        gap: 20px;
+        align-items: stretch;
+    }
+    
+    .groups-header h3 {
+        text-align: center;
+    }
+    
+    .collaboration-header {
+        flex-direction: column;
+        gap: 15px;
+        align-items: stretch;
+    }
+    
+    .delivery-item {
+        flex-direction: column;
+        gap: 8px;
+        align-items: flex-start;
+    }
+    
+    .modal-content {
+        margin: 20px;
+        width: calc(100% - 40px);
+        padding: 25px;
+    }
+    
+    .modal-content h2 {
+        font-size: 20px;
+    }
+    
+    .form-actions {
+        flex-direction: column;
+    }
+    
+    .form-actions button {
+        width: 100%;
+    }
+    
+    .progress-text {
+        text-align: center;
+        margin-top: 5px;
+    }
+    
+    .benefit-item {
+        padding: 12px;
+    }
+    
+    .delivery-benefits {
+        margin: 20px 0;
+    }
+}
+
+@media (max-width: 480px) {
+    .collaboration-card {
+        padding: 20px;
+    }
+    
+    .modal-content {
+        padding: 20px;
+    }
+    
+    .form-group input,
+    .form-group textarea {
+        padding: 12px;
+    }
+    
+    .create-group-button {
+        padding: 10px 16px;
+        font-size: 12px;
     }
 }
