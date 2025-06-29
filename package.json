@@ -4,6 +4,7 @@
     "autoprefixer": "^10.4.21"
   },
   "dependencies": {
-    "lucide-react": "^0.525.0"
+    "lucide-react": "^0.525.0",
+    "react-loader-spinner": "^6.1.6"
   }
 }
