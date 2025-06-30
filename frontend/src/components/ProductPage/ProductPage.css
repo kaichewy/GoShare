@@ -392,11 +392,34 @@ body, html {
     transition: all 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 0.5px;
+    min-width: 100px;
 }
 
-.join-button:hover {
+.join-button:hover:not(:disabled) {
     background: linear-gradient(135deg, #059669, #047857);
     transform: translateY(-1px);
+}
+
+/* Joined button state */
+.join-button.joined {
+    background: linear-gradient(135deg, #64748b, #475569);
+    cursor: not-allowed;
+    opacity: 0.8;
+    position: relative;
+}
+
+.join-button.joined::before {
+    content: '✓ ';
+    margin-right: 4px;
+}
+
+.join-button:disabled {
+    cursor: not-allowed;
+    opacity: 0.8;
+}
+
+.join-button:disabled:hover {
+    transform: none;
 }
 
 .collaboration-details {
@@ -677,6 +700,194 @@ body, html {
     font-weight: 800;
 }
 
+/* Error/Success Modal Styles */
+.error-modal {
+    text-align: center;
+    max-width: 450px;
+    padding: 0;
+    border-radius: 20px;
+    overflow: hidden;
+    border: none;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.error-modal-header {
+    background: linear-gradient(135deg, #f87171, #dc2626);
+    color: white;
+    padding: 50px 35px 30px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    position: relative;
+}
+
+.error-modal-header.success {
+    background: linear-gradient(135deg, #4ade80, #22c55e);
+}
+
+.error-icon {
+    font-size: 60px;
+    font-weight: 800;
+    margin-bottom: 20px;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.2);
+}
+
+.error-modal h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 700;
+    color: white;
+    text-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+
+.error-modal-body {
+    background: white;
+    padding: 30px 35px;
+}
+
+.error-modal-body p {
+    color: #6b7280;
+    line-height: 1.6;
+    font-size: 15px;
+    margin: 0;
+}
+
+.error-modal-actions {
+    background: white;
+    padding: 0 35px 35px;
+    display: flex;
+    justify-content: center;
+}
+
+.error-modal-button {
+    padding: 15px 40px;
+    border: none;
+    border-radius: 12px;
+    cursor: pointer;
+    font-weight: 600;
+    font-size: 14px;
+    transition: all 0.3s ease;
+    min-width: 140px;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    background: rgba(248, 113, 113, 0.15);
+    color: #dc2626;
+    border: 2px solid rgba(248, 113, 113, 0.2);
+}
+
+.error-modal-button:hover {
+    background: rgba(248, 113, 113, 0.25);
+    transform: translateY(-1px);
+    border-color: rgba(248, 113, 113, 0.3);
+}
+
+.error-modal-button.success {
+    background: rgba(74, 222, 128, 0.15);
+    color: #16a34a;
+    border: 2px solid rgba(74, 222, 128, 0.2);
+}
+
+.error-modal-button.success:hover {
+    background: rgba(74, 222, 128, 0.25);
+    transform: translateY(-1px);
+    border-color: rgba(74, 222, 128, 0.3);
+}
+
+/* Animation for modal entrance */
+@keyframes modalSlideIn {
+    from {
+        opacity: 0;
+        transform: scale(0.8) translateY(-20px);
+    }
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+.error-modal {
+    animation: modalSlideIn 0.3s ease-out;
+}
+
+/* Join Group Info Styling */
+.join-group-info {
+    background: linear-gradient(135deg, #f8f9fb, #f0fdf4);
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    border: 2px solid #e5e7eb;
+}
+
+.join-group-info h3 {
+    margin: 0 0 15px 0;
+    color: #111827;
+    font-size: 18px;
+    font-weight: 700;
+}
+
+.join-group-info p {
+    margin: 8px 0;
+    color: #6b7280;
+    font-size: 14px;
+}
+
+.join-group-info strong {
+    color: #374151;
+    font-weight: 600;
+}
+
+/* Price Estimate Styling */
+.price-estimate {
+    background: linear-gradient(135deg, #f0fdf4, #dcfce7);
+    border-radius: 12px;
+    padding: 20px;
+    margin: 25px 0;
+    border: 2px solid #bbf7d0;
+}
+
+.price-estimate h4 {
+    margin: 0 0 15px 0;
+    color: #166534;
+    font-size: 16px;
+    font-weight: 700;
+}
+
+.estimate-breakdown {
+    margin-bottom: 15px;
+}
+
+.estimate-line {
+    display: flex;
+    justify-content: space-between;
+    padding: 8px 0;
+    font-size: 14px;
+    color: #374151;
+}
+
+.estimate-line.total {
+    border-top: 2px solid #bbf7d0;
+    margin-top: 10px;
+    padding-top: 12px;
+    font-size: 16px;
+}
+
+.estimate-note {
+    font-size: 12px;
+    color: #6b7280;
+    font-style: italic;
+    margin: 0;
+    text-align: center;
+}
+
+/* Quantity Info */
+.quantity-info {
+    font-size: 12px;
+    color: #6b7280;
+    margin-top: 5px;
+    font-style: italic;
+}
+
 /* Form Styles */
 .form-group {
     margin-bottom: 25px;
@@ -897,6 +1108,28 @@ body, html {
     .delivery-benefits {
         margin: 20px 0;
     }
+
+    .error-modal {
+        padding: 0;
+        margin: 20px;
+        width: calc(100% - 40px);
+    }
+
+    .error-modal-header {
+        padding: 40px 25px 25px;
+    }
+
+    .error-modal-body {
+        padding: 25px;
+    }
+
+    .error-modal-actions {
+        padding: 0 25px 25px;
+    }
+
+    .error-icon {
+        font-size: 50px;
+    }
 }
 
 @media (max-width: 480px) {
@@ -916,5 +1149,32 @@ body, html {
     .create-group-button {
         padding: 10px 16px;
         font-size: 12px;
+    }
+
+    .error-modal {
+        padding: 0;
+        margin: 15px;
+        width: calc(100% - 30px);
+    }
+
+    .error-modal-header {
+        padding: 35px 20px 20px;
+    }
+
+    .error-modal-body {
+        padding: 20px;
+    }
+
+    .error-modal-actions {
+        padding: 0 20px 20px;
+    }
+
+    .error-icon {
+        font-size: 40px;
+        margin-bottom: 15px;
+    }
+
+    .error-modal h2 {
+        font-size: 18px;
     }
 }

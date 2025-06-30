@@ -1,114 +1,49 @@
-// src/components/Sidebar/Sidebar.jsx
-import React, { useState } from 'react';
-import './Sidebar.css';
-import { Menu, X } from 'lucide-react';
+// Import with import Sidebar from '@/components/Sidebar/Sidebar';
+import React from 'react';
+import { Package, Truck, Activity, HelpCircle } from 'lucide-react';
 
-const Sidebar = () => {
-  const [isOpen, setIsOpen] = useState(false);
-  const menuItems = ['ORDERS', 'DELIVERY', 'PRODUCTS', 'HELP'];
-
-  const toggleSidebar = () => {
-    setIsOpen(!isOpen);
-  };
-
-  const closeSidebar = () => { // Helper function to explicitly close
-    setIsOpen(false);
-  };
+const Sidebar = ({ activeView, setActiveView }) => {
+  const navItems = [
+    { id: 'orders',    label: 'Orders',   icon: Package },
+    { id: 'delivery',  label: 'Delivery', icon: Truck   },
+    { id: 'status',    label: 'Status',   icon: Activity },
+    { id: 'help',      label: 'Help',     icon: HelpCircle },
+  ];
 
   return (
-    <>
-      {/* Menu Button: Positioned on the top-left to toggle the sidebar */}
-      <button
-        className={`menu-toggle-btn ${isOpen ? 'active' : ''}`} // Renamed class for clarity
-        onClick={toggleSidebar}
-        aria-label="Toggle menu"
-      >
-        {isOpen ? <X size={24} /> : <Menu size={24} />} {/* Larger icons for better click target */}
-      </button>
-
-      {/* Overlay: Visible when sidebar is open, closes sidebar on click */}
-      {isOpen && <div className="sidebar-overlay" onClick={closeSidebar}></div>}
-
-      {/* Sidebar */}
-      <div className={`sidebar ${isOpen ? 'active' : ''}`}>
-
-        <div className="sidebar-menu">
-          {menuItems.map((item) => (
-            <button
-              key={item}
-              className="sidebar-button"
-              onClick={() => {
-                console.log(`Clicked ${item}`);
-                closeSidebar(); // Always close sidebar after clicking an item
-              }}
-            >
-              {item}
-            </button>
-          ))}
+    <div className="fixed left-0 top-0 h-full w-64 bg-white/80 backdrop-blur-sm border-r border-blue-100 shadow-lg z-10">
+      <div className="p-6">
+        <div className="flex items-center space-x-3 mb-8">
+          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
+            <Package className="w-6 h-6 text-white" />
+          </div>
+          <h1 className="text-xl font-semibold text-gray-800">GoShare</h1>
         </div>
+
+        <nav className="space-y-2">
+          {navItems.map(item => {
+            const Icon = item.icon;
+            const isActive = activeView === item.id;
+
+            return (
+              <button
+                key={item.id}
+                onClick={() => setActiveView(item.id)}
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
+                  isActive
+                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
+                    : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                }`}
+              >
+                <Icon className="w-5 h-5" />
+                <span className="font-medium">{item.label}</span>
+              </button>
+            );
+          })}
+        </nav>
       </div>
-    </>
+    </div>
   );
 };
 
 export default Sidebar;
-
-// // src/components/Sidebar/Sidebar.jsx
-// import React, { useState } from 'react';
-// import './Sidebar.css';
-// import { Menu, X } from 'lucide-react';
-
-// const Sidebar = () => {
-//   const [isOpen, setIsOpen] = useState(false);
-//   const menuItems = ['ORDERS', 'DELIVERY', 'PRODUCTS', 'HELP'];
-
-//   const toggleSidebar = () => {
-//     setIsOpen(!isOpen);
-//   };
-
-//   return (
-//     <>
-//       {/* Mobile Menu Button */}
-//       <button 
-//         className={`mobile-menu-btn ${isOpen ? 'active' : ''}`}
-//         onClick={toggleSidebar}
-//         aria-label="Toggle menu"
-//       >
-//         {isOpen ? <X size={20} /> : <Menu size={20} />}
-//       </button>
-
-//       {/* Overlay for mobile */}
-//       {isOpen && <div className="sidebar-overlay" onClick={toggleSidebar}></div>}
-
-//       {/* Sidebar */}
-//       <div className={`sidebar ${isOpen ? 'active' : ''}`}>
-//         <div className="sidebar-header">
-//           <h1 className="sidebar-title">
-//             Go<br />SHARE
-//           </h1>
-//         </div>
-        
-//         <div className="sidebar-menu">
-//           {menuItems.map((item) => (
-//             <button 
-//               key={item} 
-//               className="sidebar-button"
-//               onClick={() => {
-//                 // Add your navigation logic here
-//                 console.log(`Clicked ${item}`);
-//                 // Close sidebar on mobile after clicking
-//                 // if (window.innerWidth <= 768) {
-//                   setIsOpen(false);
-//                 // }
-//               }}
-//             >
-//               {item}
-//             </button>
-//           ))}
-//         </div>
-//       </div>
-//     </>
-//   );
-// };
-
-// export default Sidebar;

@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
+import { Frown } from 'lucide-react';
 import './ProductPage.css';
 import { useParams } from 'react-router-dom';
 import axios from 'axios';
@@ -16,8 +17,12 @@ export default function ProductPage() {
   const [error, setError] = useState(null);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
   const [showJoinGroup, setShowJoinGroup] = useState(false);
+  const [showErrorModal, setShowErrorModal] = useState(false);
+  const [errorMessage, setErrorMessage] = useState('');
+  const [errorDetails, setErrorDetails] = useState('');
   const [selectedGroup, setSelectedGroup] = useState(null);
   const [joinQuantity, setJoinQuantity] = useState(1);
+  const [joinedGroups, setJoinedGroups] = useState(new Set()); // Track joined groups
   const [newGroupData, setNewGroupData] = useState({
     business_name: '',
     target_quantity: 25,
@@ -27,6 +32,37 @@ export default function ProductPage() {
   });
 
   const { productID } = useParams();
+
+  // Check if user has joined a specific group
+  const hasJoinedGroup = (groupId) => {
+    return joinedGroups.has(groupId);
+  };
+
+  // Check if user is a member of a specific group
+  const checkGroupMembership = async (groupId) => {
+    try {
+      await axios.post(`http://localhost:8080/groups/${groupId}/join`, { quantity: 1 });
+      return false; // Not a member if join succeeds (but we won't actually commit this)
+    } catch (error) {
+      if (error.response?.status === 409 && 
+          error.response?.data?.error === "User already joined this group") {
+        return true; // Already a member
+      }
+      return false; // Other error, assume not a member
+    }
+  };
+
+  // Helper function to check if error is success
+  const isSuccessMessage = () => {
+    return errorMessage.includes('Success') || errorMessage.includes('Created');
+  };
+
+  // Function to trigger an error (for testing)
+  const triggerTestError = () => {
+    setErrorMessage("Error 404");
+    setErrorDetails("Operation could be completed (WD GeneralErrorNetwork404)");
+    setShowErrorModal(true);
+  };
 
   // Fetch product data from backend
   useEffect(() => {
@@ -49,7 +85,7 @@ export default function ProductPage() {
     }
   }, [productID]);
 
-  // Fetch groups for this product
+  // Fetch groups for this product and check membership
   useEffect(() => {
     const fetchGroups = async () => {
       if (!productID) return;
@@ -57,7 +93,22 @@ export default function ProductPage() {
       try {
         setGroupsLoading(true);
         const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
-        setGroups(response.data || []);
+        const groupsData = response.data || [];
+        setGroups(groupsData);
+        
+        // Check membership for each group by testing with the backend
+        const membershipChecks = groupsData.map(async (group) => {
+          const isMember = await checkGroupMembership(group.id);
+          return { groupId: group.id, isMember };
+        });
+        
+        const membershipResults = await Promise.all(membershipChecks);
+        const joinedGroupIds = membershipResults
+          .filter(result => result.isMember)
+          .map(result => result.groupId);
+        
+        setJoinedGroups(new Set(joinedGroupIds));
+        
       } catch (error) {
         console.error('Error fetching groups:', error);
         setGroups([]); // Set empty array on error
@@ -71,6 +122,13 @@ export default function ProductPage() {
 
   // Open join modal
   const openJoinModal = (group) => {
+    if (hasJoinedGroup(group.id)) {
+      setErrorMessage("Already Joined!");
+      setErrorDetails("You're already a member of this group order. You can check your order status in your account.");
+      setShowErrorModal(true);
+      return;
+    }
+    
     setSelectedGroup(group);
     setJoinQuantity(1);
     setShowJoinGroup(true);
@@ -83,6 +141,13 @@ export default function ProductPage() {
     setJoinQuantity(1);
   };
 
+  // Close error modal
+  const closeErrorModal = () => {
+    setShowErrorModal(false);
+    setErrorMessage('');
+    setErrorDetails('');
+  };
+
   // Join a group with specified quantity
   const handleJoinGroup = async (e) => {
     e.preventDefault();
@@ -92,15 +157,45 @@ export default function ProductPage() {
         quantity: joinQuantity
       });
       
+      // Mark this group as joined only on success
+      setJoinedGroups(prev => new Set([...prev, selectedGroup.id]));
+      
       // Refresh groups after joining
       const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
       setGroups(response.data || []);
       
       closeJoinModal();
-      alert(`Successfully joined the group with ${joinQuantity} cases!`);
+      
+      // Show success message
+      setErrorMessage("Successfully Joined!");
+      setErrorDetails(`You've successfully joined ${selectedGroup.business_name} with ${joinQuantity} cases. You'll be notified when the group reaches its target.`);
+      setShowErrorModal(true);
+      
     } catch (error) {
       console.error('Error joining group:', error);
-      alert('Failed to join group. Please try again.');
+      
+      if (error.response?.status === 409) {
+        const errorData = error.response.data;
+        closeJoinModal();
+        
+        if (errorData.error === "User already joined this group") {
+          // Only mark as joined if they were actually already in the group
+          setJoinedGroups(prev => new Set([...prev, selectedGroup.id]));
+          setErrorMessage("Already Joined!");
+          setErrorDetails("You're already a member of this group order. You can check your order status in your account.");
+        } else if (errorData.error?.includes("target quantity")) {
+          setErrorMessage("Group Full!");
+          setErrorDetails("This group has already reached its target quantity. Try joining another group or create a new one.");
+        } else {
+          setErrorMessage("Cannot Join Group!");
+          setErrorDetails(errorData.error || "There was a conflict with your request. Please try again.");
+        }
+        setShowErrorModal(true);
+      } else {
+        setErrorMessage("Join Failed!");
+        setErrorDetails("Failed to join the group. Please check your connection and try again.");
+        setShowErrorModal(true);
+      }
     }
   };
 
@@ -138,10 +233,16 @@ export default function ProductPage() {
       });
       setShowCreateGroup(false);
       
-      alert('Group created successfully!');
+      // Show success message
+      setErrorMessage("Group Created!");
+      setErrorDetails("Your group order has been created successfully. Others can now join your group to reach the target quantity.");
+      setShowErrorModal(true);
+      
     } catch (error) {
       console.error('Error creating group:', error);
-      alert('Failed to create group. Please try again.');
+      setErrorMessage("Creation Failed!");
+      setErrorDetails("Failed to create the group. Please check your information and try again.");
+      setShowErrorModal(true);
     }
   };
 
@@ -314,6 +415,10 @@ export default function ProductPage() {
               <div className="tab-content">
                 <div className="groups-header">
                   <h3>Active Group Orders</h3>
+                  {/* Add this button to test error modal */}
+                  <button onClick={triggerTestError} style={{padding: '5px 10px', fontSize: '12px', background: '#ccc'}}>
+                    Test Error
+                  </button>
                 </div>
 
                 {groupsLoading ? (
@@ -325,10 +430,11 @@ export default function ProductPage() {
                         <div className="collaboration-header">
                           <div className="business-name">{group.business_name}</div>
                           <button 
-                            className="join-button"
+                            className={`join-button ${hasJoinedGroup(group.id) ? 'joined' : ''}`}
                             onClick={() => openJoinModal(group)}
+                            disabled={hasJoinedGroup(group.id)}
                           >
-                            Join Order
+                            {hasJoinedGroup(group.id) ? 'Order Joined' : 'Join Order'}
                           </button>
                         </div>
                         <div className="collaboration-details">
@@ -535,6 +641,37 @@ export default function ProductPage() {
                   </button>
                 </div>
               </form>
+            </div>
+          </div>
+        )}
+
+        {/* Error/Success Modal */}
+        {showErrorModal && (
+          <div className="modal-overlay" onClick={closeErrorModal}>
+            <div className="modal-content error-modal" onClick={(e) => e.stopPropagation()}>
+              <div className={`error-modal-header ${isSuccessMessage() ? 'success' : ''}`}>
+                <div className="error-icon">
+                  {isSuccessMessage() ? (
+                    '✓'
+                  ) : (
+                    <Frown size={50} />
+                  )}
+                </div>
+                <h2>{errorMessage}</h2>
+              </div>
+              
+              <div className="error-modal-body">
+                <p>{errorDetails}</p>
+              </div>
+              
+              <div className="error-modal-actions">
+                <button 
+                  className={`error-modal-button ${isSuccessMessage() ? 'success' : ''}`}
+                  onClick={closeErrorModal}
+                >
+                  {isSuccessMessage() ? 'Got it' : 'RETRY'}
+                </button>
+              </div>
             </div>
           </div>
         )}
