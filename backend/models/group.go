@@ -8,6 +8,7 @@ import (
 // Group represents a collaborative buying group
 type Group struct {
     ID              uint           `json:"id" gorm:"primaryKey"`
+    Name            string         `json:"name" gorm:"size:255;not null"`
     ProductID       uint           `json:"product_id" gorm:"not null;index"`
     BusinessName    string         `json:"business_name" gorm:"size:255;not null"`
     CurrentQuantity int            `json:"current_quantity" gorm:"default:0"`

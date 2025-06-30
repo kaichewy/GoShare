@@ -39,21 +39,22 @@ type JoinGroupRequest struct {
 // @Security Bearer
 // @Router /addGroup [post]
 func AddGroup(c *gin.Context) {
-    userID := c.GetString("userID") // From auth middleware
+    userID := c.GetString("userId") // From auth middleware
     
-    if userID == "" {
-        c.JSON(http.StatusUnauthorized, gin.H{
-            "error": "User not authenticated",
-        })
-        return
-    }
-
-    userIDUint, err := strconv.ParseUint(userID, 10, 32)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "error": "Invalid user ID",
-        })
-        return
+    // For testing without auth, use a default user ID
+    var userIDUint uint = 1 // Default to user ID 1 for testing
+    
+    if userID != "" {
+        // If userID exists from auth middleware, use it
+        var err error
+        userIDUint64, err := strconv.ParseUint(userID, 10, 32)
+        if err != nil {
+            c.JSON(http.StatusBadRequest, gin.H{
+                "error": "Invalid user ID",
+            })
+            return
+        }
+        userIDUint = uint(userIDUint64)
     }
 
     var req AddGroupRequest
@@ -65,8 +66,9 @@ func AddGroup(c *gin.Context) {
         return
     }
 
-    // Create new group
+    // Create new group using userIDUint (either from auth or default)
     newGroup := models.Group{
+		Name: req.BusinessName + " Group",
         ProductID:       req.ProductID,
         BusinessName:    req.BusinessName,
         CurrentQuantity: 0,
@@ -74,7 +76,7 @@ func AddGroup(c *gin.Context) {
         Location:        req.Location,
         DeliveryDate:    req.DeliveryDate,
         Description:     req.Description,
-        CreatedBy:       uint(userIDUint),
+        CreatedBy:       userIDUint, // ← Use the userIDUint
         CreatedAt:       time.Now(),
         UpdatedAt:       time.Now(),
     }
@@ -192,7 +194,6 @@ func GetGroupsByProduct(c *gin.Context) {
 // @Router /groups/{id}/join [post]
 func JoinGroup(c *gin.Context) {
     groupIdStr := c.Param("id")
-    userID := c.GetString("userID") // This comes from your auth middleware
     
     // Validate groupId
     groupId, err := strconv.ParseUint(groupIdStr, 10, 32)
@@ -203,27 +204,13 @@ func JoinGroup(c *gin.Context) {
         return
     }
 
-    // Validate userID
-    if userID == "" {
-        c.JSON(http.StatusUnauthorized, gin.H{
-            "error": "User not authenticated",
-        })
-        return
-    }
-
-    userIDUint, err := strconv.ParseUint(userID, 10, 32)
-    if err != nil {
-        c.JSON(http.StatusBadRequest, gin.H{
-            "error": "Invalid user ID",
-        })
-        return
-    }
+    // For testing: Use default user ID 1 (remove auth check)
+    userIDUint := uint(1)
 
     // Parse request body
     var req JoinGroupRequest
     if err := c.ShouldBindJSON(&req); err != nil {
-        // Set default quantity if not provided
-        req.Quantity = 1
+        req.Quantity = 1 // Default quantity
     }
 
     // Start database transaction
@@ -277,7 +264,7 @@ func JoinGroup(c *gin.Context) {
     // 4. Add user to group
     newMember := models.GroupMember{
         GroupID:  uint(groupId),
-        UserID:   uint(userIDUint),
+        UserID:   userIDUint,
         Quantity: req.Quantity,
         JoinedAt: time.Now(),
     }
@@ -293,7 +280,8 @@ func JoinGroup(c *gin.Context) {
     }
 
     // 5. Update group's current quantity
-    result = tx.Model(&group).Update("current_quantity", group.CurrentQuantity + req.Quantity)
+    newTotal := group.CurrentQuantity + req.Quantity
+    result = tx.Model(&group).Update("current_quantity", newTotal)
     if result.Error != nil {
         tx.Rollback()
         c.JSON(http.StatusInternalServerError, gin.H{
@@ -318,7 +306,7 @@ func JoinGroup(c *gin.Context) {
         "group_id": groupId,
         "user_id": userIDUint,
         "quantity": req.Quantity,
-        "new_total": group.CurrentQuantity + req.Quantity,
+        "new_total": newTotal,
         "target": group.TargetQuantity,
     })
 }

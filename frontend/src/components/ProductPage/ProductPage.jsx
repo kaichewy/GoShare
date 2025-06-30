@@ -15,6 +15,9 @@ export default function ProductPage() {
   const [groupsLoading, setGroupsLoading] = useState(false);
   const [error, setError] = useState(null);
   const [showCreateGroup, setShowCreateGroup] = useState(false);
+  const [showJoinGroup, setShowJoinGroup] = useState(false);
+  const [selectedGroup, setSelectedGroup] = useState(null);
+  const [joinQuantity, setJoinQuantity] = useState(1);
   const [newGroupData, setNewGroupData] = useState({
     business_name: '',
     target_quantity: 25,
@@ -66,21 +69,35 @@ export default function ProductPage() {
     fetchGroups();
   }, [productID]);
 
-  // Join a group
-  const handleJoinGroup = async (groupId) => {
+  // Open join modal
+  const openJoinModal = (group) => {
+    setSelectedGroup(group);
+    setJoinQuantity(1);
+    setShowJoinGroup(true);
+  };
+
+  // Close join modal
+  const closeJoinModal = () => {
+    setShowJoinGroup(false);
+    setSelectedGroup(null);
+    setJoinQuantity(1);
+  };
+
+  // Join a group with specified quantity
+  const handleJoinGroup = async (e) => {
+    e.preventDefault();
+    
     try {
-      const token = localStorage.getItem('token'); // Adjust based on your auth implementation
-      await axios.post(`http://localhost:8080/groups/${groupId}/join`, {}, {
-        headers: {
-          Authorization: `Bearer ${token}`
-        }
+      await axios.post(`http://localhost:8080/groups/${selectedGroup.id}/join`, {
+        quantity: joinQuantity
       });
       
       // Refresh groups after joining
       const response = await axios.get(`http://localhost:8080/groups/product/${productID}`);
       setGroups(response.data || []);
       
-      alert('Successfully joined the group!');
+      closeJoinModal();
+      alert(`Successfully joined the group with ${joinQuantity} cases!`);
     } catch (error) {
       console.error('Error joining group:', error);
       alert('Failed to join group. Please try again.');
@@ -92,7 +109,7 @@ export default function ProductPage() {
     e.preventDefault();
     
     try {
-      const token = localStorage.getItem('token'); // Adjust based on your auth implementation
+      const token = localStorage.getItem('token');
       console.log('Token:', token);
       
       const groupData = {
@@ -131,6 +148,12 @@ export default function ProductPage() {
   // Calculate progress percentage
   const getProgressPercentage = (current, target) => {
     return target > 0 ? Math.min((current / target) * 100, 100) : 0;
+  };
+
+  // Calculate price estimate
+  const calculatePriceEstimate = (quantity, unitPrice) => {
+    const total = quantity * unitPrice;
+    return total.toFixed(2);
   };
 
   // Format date for display
@@ -270,8 +293,6 @@ export default function ProductPage() {
               </div>
             </div>
 
-
-
             {/* Tabs */}
             <div className="tabs">
               <TabButton
@@ -293,12 +314,6 @@ export default function ProductPage() {
               <div className="tab-content">
                 <div className="groups-header">
                   <h3>Active Group Orders</h3>
-                  <button 
-                    className="create-group-button"
-                    onClick={() => setShowCreateGroup(true)}
-                  >
-                    + Create New Group
-                  </button>
                 </div>
 
                 {groupsLoading ? (
@@ -311,7 +326,7 @@ export default function ProductPage() {
                           <div className="business-name">{group.business_name}</div>
                           <button 
                             className="join-button"
-                            onClick={() => handleJoinGroup(group.id)}
+                            onClick={() => openJoinModal(group)}
                           >
                             Join Order
                           </button>
@@ -460,6 +475,64 @@ export default function ProductPage() {
                     Cancel
                   </button>
                   <button type="submit">Create Group</button>
+                </div>
+              </form>
+            </div>
+          </div>
+        )}
+
+        {/* Join Group Modal */}
+        {showJoinGroup && selectedGroup && (
+          <div className="modal-overlay" onClick={closeJoinModal}>
+            <div className="modal-content" onClick={(e) => e.stopPropagation()}>
+              <h2>Join Group Order</h2>
+              <div className="join-group-info">
+                <h3>{selectedGroup.business_name}</h3>
+                <p><strong>Location:</strong> {selectedGroup.location}</p>
+                <p><strong>Delivery:</strong> {formatDate(selectedGroup.delivery_date)}</p>
+                <p><strong>Current Progress:</strong> {selectedGroup.current_quantity} / {selectedGroup.target_quantity} cases</p>
+              </div>
+              
+              <form onSubmit={handleJoinGroup}>
+                <div className="form-group">
+                  <label>Quantity (cases)</label>
+                  <input
+                    type="number"
+                    value={joinQuantity}
+                    onChange={(e) => setJoinQuantity(parseInt(e.target.value) || 1)}
+                    min="1"
+                    max={selectedGroup.target_quantity - selectedGroup.current_quantity}
+                    required
+                  />
+                  <div className="quantity-info">
+                    Available: {selectedGroup.target_quantity - selectedGroup.current_quantity} cases
+                  </div>
+                </div>
+
+                <div className="price-estimate">
+                  <h4>Price Estimate</h4>
+                  <div className="estimate-breakdown">
+                    <div className="estimate-line">
+                      <span>{joinQuantity} cases × ${product.Price}</span>
+                      <span>${calculatePriceEstimate(joinQuantity, product.Price)}</span>
+                    </div>
+                    <div className="estimate-line total">
+                      <span><strong>Total Estimate</strong></span>
+                      <span><strong>${calculatePriceEstimate(joinQuantity, product.Price)}</strong></span>
+                    </div>
+                  </div>
+                  <p className="estimate-note">
+                    * Final price may vary based on group discounts and delivery costs
+                  </p>
+                </div>
+                
+                <div className="form-actions">
+                  <button type="button" onClick={closeJoinModal}>
+                    Cancel
+                  </button>
+                  <button type="submit">
+                    Join Group ({joinQuantity} cases)
+                  </button>
                 </div>
               </form>
             </div>
