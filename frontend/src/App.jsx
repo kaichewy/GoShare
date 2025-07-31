@@ -27,18 +27,19 @@ function App() {
   }, []);
   
   return (
-    <div>
-      
+    <div className="min-h-screen bg-gray-50">
       <BrowserRouter>
-        <Sidebar></Sidebar>
-        <Routes>
-          <Route path="/" element={<HomeView />} />
-          <Route path="/cart" element={<CartView />} />
-          <Route path="/delivery" element={<DeliveryView />} />
-          <Route path="/product/:productID" element={<ProductView />} />
-          <Route path="/profile" element={<ProfileView />} />
-          <Route path="*" element={<ErrorView />} />
-        </Routes>
+        <Sidebar />
+        <div className="ml-72">
+          <Routes>
+            <Route path="/" element={<HomeView />} />
+            <Route path="/cart" element={<CartView />} />
+            <Route path="/delivery" element={<DeliveryView />} />
+            <Route path="/product/:productID" element={<ProductView />} />
+            <Route path="/profile" element={<ProfileView />} />
+            <Route path="*" element={<ErrorView />} />
+          </Routes>
+        </div>
       </BrowserRouter>
       {modal.opened && (
         <Modal

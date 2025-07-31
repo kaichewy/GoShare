@@ -1,5 +1,4 @@
 import "./Product.css";
-import headphones_pink from "@/assets/images/airpods_max_pink.jpg";
 import { FaStar } from "react-icons/fa";
 import { useGlobalContext } from "@/components/GlobalContext/GlobalContext";
 import { toast } from "react-toastify";

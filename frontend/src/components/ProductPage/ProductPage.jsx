@@ -333,25 +333,25 @@ export default function ProductPage() {
             {/* Product Image */}
             <div className="product-image">
               <img 
-                src={product.ImageURL} 
-                alt={product.Name}
+                src={product.image} 
+                alt={product.name}
                 className="product-main-image"
               />
             </div>
 
             {/* Product Description */}
-            {product.Description && (
+            {product.description && (
               <div className="product-specs">
                 <h3>Product Description</h3>
-                <p>{product.Description}</p>
+                <p>{product.description}</p>
               </div>
             )}
           </div>
 
           {/* Details Section */}
           <div className="details-section">
-            <div className="breadcrumb">{product.Category || 'PRODUCTS'}</div>
-            <h1 className="product-title">{product.Name}</h1>
+            <div className="breadcrumb">{product.category || 'PRODUCTS'}</div>
+            <h1 className="product-title">{product.name}</h1>
 
             {/* Rating - only show if available */}
             {(product.rating || product.reviews) && (
@@ -415,10 +415,6 @@ export default function ProductPage() {
               <div className="tab-content">
                 <div className="groups-header">
                   <h3>Active Group Orders</h3>
-                  {/* Add this button to test error modal */}
-                  <button onClick={triggerTestError} style={{padding: '5px 10px', fontSize: '12px', background: '#ccc'}}>
-                    Test Error
-                  </button>
                 </div>
 
                 {groupsLoading ? (
@@ -504,7 +500,7 @@ export default function ProductPage() {
             {/* Price and CTA */}
             <div className="price-section">
               <div className="final-price">
-                ${product.Price}
+                ${product.price}
               </div>
               
               <button 
@@ -619,12 +615,12 @@ export default function ProductPage() {
                   <h4>Price Estimate</h4>
                   <div className="estimate-breakdown">
                     <div className="estimate-line">
-                      <span>{joinQuantity} cases × ${product.Price}</span>
-                      <span>${calculatePriceEstimate(joinQuantity, product.Price)}</span>
+                      <span>{joinQuantity} cases × ${product.price}</span>
+                      <span>${calculatePriceEstimate(joinQuantity, product.price)}</span>
                     </div>
                     <div className="estimate-line total">
                       <span><strong>Total Estimate</strong></span>
-                      <span><strong>${calculatePriceEstimate(joinQuantity, product.Price)}</strong></span>
+                      <span><strong>${calculatePriceEstimate(joinQuantity, product.price)}</strong></span>
                     </div>
                   </div>
                   <p className="estimate-note">

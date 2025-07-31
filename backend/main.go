@@ -19,6 +19,7 @@ func setupRouter() *gin.Engine {
 
 func main() {
 	db.Connect() // connect database
+	db.SeedProducts() // seed sample products
 
 	port := os.Getenv("BACKEND_PORT")
 	if port == "" {

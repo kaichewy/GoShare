@@ -49,7 +49,7 @@ body, html {
 }
 
 .back-button {
-    color: #4ade80;
+    color: #329545;
     text-decoration: none;
     font-size: 14px;
     margin-bottom: 25px;
@@ -61,7 +61,7 @@ body, html {
 }
 
 .back-button:hover {
-    color: #22c55e;
+    color: #2a7a3a;
 }
 
 .product-image {
@@ -73,7 +73,7 @@ body, html {
     align-items: center;
     justify-content: center;
     margin-bottom: 30px;
-    box-shadow: 0 10px 30px rgba(74, 222, 128, 0.1);
+    box-shadow: 0 10px 30px rgba(50, 149, 69, 0.1);
     border: 1px solid #e5e7eb;
     overflow: hidden;
     min-height: 200px;
@@ -95,7 +95,7 @@ body, html {
     border-radius: 20px;
     padding: 30px;
     margin-top: 30px;
-    box-shadow: 0 10px 30px rgba(74, 222, 128, 0.1);
+    box-shadow: 0 10px 30px rgba(50, 149, 69, 0.1);
 }
 
 .product-specs h3 {
@@ -137,7 +137,7 @@ body, html {
 
 .breadcrumb {
     font-size: 11px;
-    color: #4ade80;
+    color: #329545;
     text-transform: uppercase;
     letter-spacing: 1.5px;
     margin-bottom: 8px;
@@ -203,19 +203,19 @@ body, html {
 }
 
 .option-button:hover {
-    border-color: #4ade80;
+    border-color: #329545;
     background: #f0fdf4;
-    color: #4ade80;
+    color: #329545;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.2);
+    box-shadow: 0 6px 20px rgba(50, 149, 69, 0.2);
 }
 
 .option-button.active {
-    border-color: #4ade80;
-    background: #4ade80;
+    border-color: #329545;
+    background: #329545;
     color: white;
     transform: translateY(-2px);
-    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 6px 20px rgba(50, 149, 69, 0.3);
 }
 
 /* Bulk Pricing */
@@ -224,7 +224,7 @@ body, html {
     border-radius: 18px;
     padding: 25px;
     margin-bottom: 30px;
-    border: 2px solid #bbf7d0;
+    border: 2px solid #329545;
 }
 
 .bulk-pricing-title {
@@ -248,7 +248,7 @@ body, html {
 }
 
 .savings-badge {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
     color: white;
     padding: 4px 10px;
     border-radius: 20px;
@@ -257,7 +257,7 @@ body, html {
     margin-left: 10px;
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    box-shadow: 0 2px 8px rgba(16, 185, 129, 0.3);
+    box-shadow: 0 2px 8px rgba(50, 149, 69, 0.3);
 }
 
 /* Tabs */
@@ -282,12 +282,12 @@ body, html {
 }
 
 .tab-button:hover {
-    color: #4ade80;
+    color: #329545;
 }
 
 .tab-button.active {
-    color: #4ade80;
-    border-bottom-color: #4ade80;
+    color: #329545;
+    border-bottom-color: #329545;
 }
 
 .tab-button.active::after {
@@ -297,7 +297,7 @@ body, html {
     left: 0;
     right: 0;
     height: 3px;
-    background: linear-gradient(90deg, #4ade80, #22c55e);
+    background: linear-gradient(90deg, #329545, #2a7a3a);
     border-radius: 2px;
 }
 
@@ -324,7 +324,7 @@ body, html {
 }
 
 .create-group-button {
-    background: linear-gradient(135deg, #4ade80, #22c55e);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
     color: white;
     border: none;
     padding: 12px 20px;
@@ -335,13 +335,13 @@ body, html {
     text-transform: uppercase;
     letter-spacing: 0.5px;
     transition: all 0.3s ease;
-    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 4px 15px rgba(50, 149, 69, 0.3);
 }
 
 .create-group-button:hover {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #2a7a3a, #1f5f2e);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+    box-shadow: 0 6px 20px rgba(50, 149, 69, 0.4);
 }
 
 /* Groups List */
@@ -362,8 +362,8 @@ body, html {
 }
 
 .collaboration-card:hover {
-    border-color: #4ade80;
-    box-shadow: 0 8px 30px rgba(74, 222, 128, 0.15);
+    border-color: #329545;
+    box-shadow: 0 8px 30px rgba(50, 149, 69, 0.15);
     transform: translateY(-3px);
 }
 
@@ -381,7 +381,7 @@ body, html {
 }
 
 .join-button {
-    background: linear-gradient(135deg, #10b981, #059669);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
     color: white;
     border: none;
     padding: 8px 16px;
@@ -396,7 +396,7 @@ body, html {
 }
 
 .join-button:hover:not(:disabled) {
-    background: linear-gradient(135deg, #059669, #047857);
+    background: linear-gradient(135deg, #2a7a3a, #1f5f2e);
     transform: translateY(-1px);
 }
 
@@ -629,7 +629,7 @@ body, html {
 
 .add-to-cart {
     width: 100%;
-    background: linear-gradient(135deg, #4ade80, #22c55e);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
     color: white;
     border: none;
     padding: 18px;
@@ -641,11 +641,11 @@ body, html {
     transition: background 0.3s ease, transform 0.3s ease, box-shadow 0.3s ease;
     text-transform: uppercase;
     letter-spacing: 1px;
-    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+    box-shadow: 0 6px 20px rgba(50, 149, 69, 0.4);
 }
 
 .add-to-cart:hover {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #2a7a3a, #1f5f2e);
     transform: translateY(-1px);
     padding: 18px;
     border-radius: 16px;
@@ -662,7 +662,7 @@ body, html {
 }
 
 .product-details-link:hover {
-    color: #4ade80;
+    color: #329545;
 }
 
 /* Modal Styles */
@@ -722,7 +722,7 @@ body, html {
 }
 
 .error-modal-header.success {
-    background: linear-gradient(135deg, #4ade80, #22c55e);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
 }
 
 .error-icon {
@@ -959,15 +959,15 @@ body, html {
 }
 
 .form-actions button[type="submit"] {
-    background: linear-gradient(135deg, #4ade80, #22c55e);
+    background: linear-gradient(135deg, #329545, #2a7a3a);
     color: white;
-    box-shadow: 0 4px 15px rgba(74, 222, 128, 0.3);
+    box-shadow: 0 4px 15px rgba(50, 149, 69, 0.3);
 }
 
 .form-actions button[type="submit"]:hover {
-    background: linear-gradient(135deg, #22c55e, #16a34a);
+    background: linear-gradient(135deg, #2a7a3a, #1f5f2e);
     transform: translateY(-1px);
-    box-shadow: 0 6px 20px rgba(74, 222, 128, 0.4);
+    box-shadow: 0 6px 20px rgba(50, 149, 69, 0.4);
 }
 
 /* Enhanced Loading and Error States */

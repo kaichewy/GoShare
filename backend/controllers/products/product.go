@@ -120,7 +120,22 @@ func GetProductsLimited(c *gin.Context) {
 		return
 	}
 
-	c.JSON(http.StatusOK, products)
+	// Map DB models to response DTOs
+	var productResponses []responses.ProductResponse
+	for _, p := range products {
+		productResponse := responses.ProductResponse{
+			ID:          p.ID,
+			Name:        p.Name,
+			Description: p.Description,
+			Price:       p.Price,
+			Quantity:    p.Quantity,
+			Category:    p.Category,
+			ImageURL:    p.ImageURL,
+		}
+		productResponses = append(productResponses, productResponse)
+	}
+
+	c.JSON(http.StatusOK, productResponses)
 }
 
 // AddProduct godoc

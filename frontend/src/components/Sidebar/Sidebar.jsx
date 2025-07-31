@@ -1,42 +1,54 @@
 // Import with import Sidebar from '@/components/Sidebar/Sidebar';
 import React from 'react';
-import { Package, Truck, Activity, HelpCircle } from 'lucide-react';
+import { Package, Truck, Activity, HelpCircle, Home, ShoppingCart, User } from 'lucide-react';
+import { useNavigate, useLocation } from 'react-router-dom';
 
-const Sidebar = ({ activeView, setActiveView }) => {
+const Sidebar = () => {
+  const navigate = useNavigate();
+  const location = useLocation();
+
   const navItems = [
-    { id: 'orders',    label: 'Orders',   icon: Package },
-    { id: 'delivery',  label: 'Delivery', icon: Truck   },
-    { id: 'status',    label: 'Status',   icon: Activity },
-    { id: 'help',      label: 'Help',     icon: HelpCircle },
+    { id: 'home', label: 'Home', icon: Home, path: '/' },
+    { id: 'orders', label: 'Orders', icon: Package, path: '/orders' },
+    { id: 'delivery', label: 'Delivery', icon: Truck, path: '/delivery' },
+    { id: 'cart', label: 'Cart', icon: ShoppingCart, path: '/cart' },
+    { id: 'status', label: 'Status', icon: Activity, path: '/status' },
+    { id: 'profile', label: 'Profile', icon: User, path: '/profile' },
+    { id: 'help', label: 'Help', icon: HelpCircle, path: '/help' },
   ];
 
+  const isActive = (path) => {
+    if (path === '/') {
+      return location.pathname === '/';
+    }
+    return location.pathname.startsWith(path);
+  };
+
   return (
-    <div className="fixed left-0 top-0 h-full w-64 bg-white/80 backdrop-blur-sm border-r border-blue-100 shadow-lg z-10">
-      <div className="p-6">
-        <div className="flex items-center space-x-3 mb-8">
-          <div className="w-10 h-10 bg-gradient-to-br from-blue-500 to-indigo-600 rounded-xl flex items-center justify-center">
-            <Package className="w-6 h-6 text-white" />
-          </div>
-          <h1 className="text-xl font-semibold text-gray-800">GoShare</h1>
+    <div className="fixed left-0 top-0 h-full w-72 bg-white border-r border-gray-200 shadow-xl z-20">
+      <div className="flex flex-col h-full">
+        {/* Logo Section */}
+        <div className="p-6 border-b border-gray-100">
         </div>
 
-        <nav className="space-y-2">
+        {/* Navigation */}
+        <nav className="flex-1 p-4 space-y-2">
           {navItems.map(item => {
             const Icon = item.icon;
-            const isActive = activeView === item.id;
+            const active = isActive(item.path);
 
             return (
               <button
                 key={item.id}
-                onClick={() => setActiveView(item.id)}
-                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 ${
-                  isActive
-                    ? 'bg-gradient-to-r from-blue-500 to-indigo-600 text-white shadow-lg'
-                    : 'text-gray-600 hover:bg-blue-50 hover:text-blue-700'
+                onClick={() => navigate(item.path)}
+                className={`w-full flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                  active
+                    ? 'bg-green-600 text-white shadow-md'
+                    : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'
                 }`}
               >
-                <Icon className="w-5 h-5" />
-                <span className="font-medium">{item.label}</span>
+                <Icon className={`w-5 h-5 ${active ? 'text-white' : 'text-gray-500 group-hover:text-gray-700'}`} />
+                <span className="font-medium text-sm">{item.label}</span>
               </button>
             );
           })}
