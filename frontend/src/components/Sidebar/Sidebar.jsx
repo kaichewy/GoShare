@@ -32,7 +32,7 @@ const Sidebar = () => {
         </div>
 
         {/* Navigation */}
-        <nav className="flex-1 p-4 space-y-2">
+        <nav className="flex-1 p-4">
           {navItems.map(item => {
             const Icon = item.icon;
             const active = isActive(item.path);
@@ -41,7 +41,7 @@ const Sidebar = () => {
               <button
                 key={item.id}
                 onClick={() => navigate(item.path)}
-                className={`w-full flex items-center space-x-4 px-4 py-3 rounded-xl transition-all duration-200 group ${
+                className={`w-full flex items-center space-x-3 px-4 py-3 rounded-xl transition-all duration-200 group mb-2 ${
                   active
                     ? 'bg-green-600 text-white shadow-md'
                     : 'text-gray-600 hover:bg-gray-50 hover:text-gray-900'

@@ -23,7 +23,7 @@ export default function ProfileView() {
       <Sidebar activeView={activeView} setActiveView={setActiveView} />
 
       {/* Main content sits to the right of the 16rem sidebar */}
-      <main className="ml-64 flex-grow p-6 bg-gray-50">
+      <main className="flex-grow p-6 bg-gray-50">
         {content}
       </main>
     </div>
